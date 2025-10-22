@@ -1,124 +1,146 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Золота Осінь 2025 🍁</title>
   <style>
     body {
       margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: radial-gradient(circle at center, #111 0%, #000 100%);
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at center, #1a1a1a, #000);
       color: #fff;
       overflow: hidden;
       text-align: center;
-      height: 100vh;
     }
 
     h1 {
       font-size: 3rem;
-      margin-top: 60px;
-      color: #ffd700;
-      text-shadow: 0 0 20px #ffb400;
+      margin-top: 100px;
+      text-shadow: 0 0 20px gold;
       animation: glow 2s ease-in-out infinite alternate;
     }
 
     @keyframes glow {
-      from { text-shadow: 0 0 10px #ffb400; }
-      to { text-shadow: 0 0 25px #ffd700; }
+      from { text-shadow: 0 0 10px gold; }
+      to { text-shadow: 0 0 30px #ffae00; }
     }
 
-    .score-box {
-      margin: 40px auto;
-      padding: 20px 40px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(255, 215, 0, 0.6);
-      border-radius: 16px;
-      width: fit-content;
-      font-size: 1.5rem;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-      backdrop-filter: blur(5px);
-      min-width: 300px;
-    }
-
-    .error {
-      color: #ffcc00;
-      font-weight: bold;
+    .error, .loading {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid gold;
+      display: inline-block;
+      padding: 15px 25px;
+      border-radius: 15px;
+      margin-top: 40px;
       font-size: 1.2rem;
+      color: gold;
+    }
+
+    table {
+      margin: 40px auto;
+      border-collapse: collapse;
+      min-width: 60%;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 12px 20px;
+    }
+
+    th {
+      background: rgba(255, 215, 0, 0.2);
+      color: gold;
+    }
+
+    tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .leaf {
-      position: fixed;
-      top: -10px;
-      animation: fall linear forwards;
-      pointer-events: none;
-      z-index: 10;
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/415/415733.png');
+      background-size: cover;
+      animation: fall linear infinite;
+      opacity: 0.8;
     }
 
     @keyframes fall {
       0% {
-        transform: translateY(0) rotate(0deg);
+        transform: translateY(-10vh) rotate(0deg);
         opacity: 1;
       }
       100% {
         transform: translateY(110vh) rotate(360deg);
-        opacity: 0.8;
+        opacity: 0.4;
       }
     }
   </style>
 </head>
 <body>
-  <h1>Золота Осінь 2025</h1>
-  <div class="score-box" id="data-box">⏳ Завантаження даних...</div>
+  <h1>Золота Осінь 2025 🍂</h1>
+  <div id="status" class="loading">Завантаження даних...</div>
+  <div id="table-container"></div>
 
   <script>
-    const SHEET_URL =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/gviz/tq?tqx=out:json&gid=910619786";
+    // URL Google таблиці
+    const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/gviz/tq?tqx=out:json";
 
     async function loadData() {
       try {
-        const res = await fetch(SHEET_URL);
+        const res = await fetch(sheetURL);
         const text = await res.text();
+        const json = JSON.parse(text.substring(47).slice(0, -2));
 
-        // Витягаємо JSON із відповіді Google
-        const json = JSON.parse(text.substr(47).slice(0, -2));
-        const rows = json.table.rows;
+        const table = document.createElement("table");
+        const headerRow = document.createElement("tr");
 
-        if (rows.length < 7) {
-          document.getElementById("data-box").innerHTML =
-            "⚠️ Недостатньо рядків у таблиці";
-          return;
-        }
+        // Створюємо заголовки
+        json.table.cols.forEach(col => {
+          if (col.label) {
+            const th = document.createElement("th");
+            th.textContent = col.label;
+            headerRow.appendChild(th);
+          }
+        });
+        table.appendChild(headerRow);
 
-        // Беремо саме рядок 7 (індекс 6)
-        const row7 = rows[6].c.map(c => (c ? c.v : "")).join(" | ");
+        // Додаємо рядки
+        json.table.rows.forEach(row => {
+          const tr = document.createElement("tr");
+          row.c.forEach(cell => {
+            const td = document.createElement("td");
+            td.textContent = cell ? cell.v : "";
+            tr.appendChild(td);
+          });
+          table.appendChild(tr);
+        });
 
-        document.getElementById("data-box").innerHTML = row7 || "⚠️ Дані відсутні";
+        document.getElementById("status").remove();
+        document.getElementById("table-container").appendChild(table);
       } catch (err) {
-        document.getElementById("data-box").innerHTML =
-          "<span class='error'>⚠️ Помилка завантаження даних</span>";
-        console.error(err);
+        document.getElementById("status").textContent = "⚠️ Помилка завантаження даних";
+        console.error("Помилка:", err);
       }
     }
 
-    // Оновлення кожні 3 секунди
     loadData();
-    setInterval(loadData, 3000);
 
-    // 🍁 Падаючі листочки
+    // 🍁 Ефект падіння листя
     function createLeaf() {
-      const leaf = document.createElement("div");
-      leaf.classList.add("leaf");
-      leaf.innerHTML = "🍁";
-      leaf.style.left = Math.random() * 100 + "vw";
-      leaf.style.fontSize = Math.random() * 24 + 12 + "px";
-      leaf.style.animationDuration = Math.random() * 5 + 5 + "s";
+      const leaf = document.createElement('div');
+      leaf.classList.add('leaf');
+      leaf.style.left = Math.random() * 100 + 'vw';
+      leaf.style.animationDuration = (Math.random() * 5 + 5) + 's';
       document.body.appendChild(leaf);
-
       setTimeout(() => leaf.remove(), 10000);
     }
-
-    setInterval(createLeaf, 500);
+    setInterval(createLeaf, 400);
   </script>
 </body>
 </html>
