@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Золота Осінь 2025 🍁</title>
   <style>
     body {
@@ -51,8 +51,14 @@
     }
 
     @keyframes fall {
-      0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
+      0% {
+        transform: translateY(-10vh) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0.2;
+      }
     }
 
     .highlight {
@@ -60,8 +66,12 @@
     }
 
     @keyframes flash {
-      0% { background-color: rgba(255,215,0,0.3); }
-      100% { background-color: transparent; }
+      0% {
+        background-color: rgba(255, 215, 0, 0.3);
+      }
+      100% {
+        background-color: transparent;
+      }
     }
   </style>
 </head>
@@ -70,8 +80,10 @@
   <div class="scoreboard" id="scoreboard">Завантаження...</div>
 
   <script>
+    // 🔗 Твоя таблиця з правильним GID
     const sheetUrl =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/gviz/tq?tqx=out:json";
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/gviz/tq?tqx=out:json&gid=910619786";
+
     const scoreboard = document.getElementById("scoreboard");
     let lastRow = [];
 
@@ -80,29 +92,38 @@
         const response = await fetch(sheetUrl + "&t=" + new Date().getTime());
         const text = await response.text();
 
-        // Google додає "wrapper" перед JSON, тому прибираємо його:
-        const json = JSON.parse(text.replace(/^.*setResponse\(/, "").slice(0, -2));
-
-        const rows = json.table.rows.map(r =>
-          r.c.map(c => (c && c.v !== null ? c.v : ""))
+        // Google додає обгортку навколо JSON → прибираємо її
+        const json = JSON.parse(
+          text.replace(/^.*setResponse\(/, "").slice(0, -2)
         );
-        const headers = json.table.cols.map(c => c.label || "");
 
-        const row = rows[6]; // 7-й рядок (індекс 6)
+        const rows = json.table.rows.map((r) =>
+          r.c.map((c) => (c && c.v !== null ? c.v : ""))
+        );
+        const headers = json.table.cols.map((c) => c.label || "");
+
+        // Рядок 7 (індекс 6)
+        const row = rows[6];
         if (!row || row.length === 0) {
           scoreboard.innerHTML = "⚠️ Дані відсутні у 7-му рядку";
           return;
         }
 
-        // Підсвічування при зміні
+        // Підсвітка при зміні
         if (JSON.stringify(row) !== JSON.stringify(lastRow)) {
           scoreboard.classList.add("highlight");
           setTimeout(() => scoreboard.classList.remove("highlight"), 800);
           lastRow = row;
         }
 
+        // Форматування рядка
         scoreboard.innerHTML = row
-          .map((cell, i) => `<div><span class="label">${headers[i]}:</span> ${cell}</div>`)
+          .map(
+            (cell, i) =>
+              `<div><span class="label">${headers[i] || ""}:</span> ${
+                cell || ""
+              }</div>`
+          )
           .join("");
       } catch (err) {
         console.error("Помилка:", err);
