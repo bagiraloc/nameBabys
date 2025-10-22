@@ -34,6 +34,7 @@
       text-align: center;
       font-size: 2rem;
       backdrop-filter: blur(10px);
+      min-width: 50vw;
     }
 
     .label {
@@ -53,6 +54,15 @@
       0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
       100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
     }
+
+    .highlight {
+      animation: flash 0.8s ease;
+    }
+
+    @keyframes flash {
+      0% { background-color: rgba(255,215,0,0.3); }
+      100% { background-color: transparent; }
+    }
   </style>
 </head>
 <body>
@@ -60,17 +70,34 @@
   <div class="scoreboard" id="scoreboard">Завантаження...</div>
 
   <script>
-    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/pub?output=csv";
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/gviz/tq?tqx=out:json";
     const scoreboard = document.getElementById("scoreboard");
+    let lastRow = [];
 
     async function loadData() {
       try {
-        const response = await fetch(sheetUrl);
+        const response = await fetch(sheetUrl + "&t=" + new Date().getTime());
         const text = await response.text();
-        const rows = text.split("\n").map(r => r.split(","));
-        const row = rows[6]; // строка 7 (нумерация с 0)
+        const json = JSON.parse(text.substring(47, text.length - 2)); // розпарсити Google JSON
+        const rows = json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
+        const headers = json.table.cols.map(c => c.label || "");
+
+        // Вибираємо рядок 7 (індекс 6)
+        const row = rows[6];
+        if (!row) {
+          scoreboard.innerHTML = "⚠️ Дані відсутні";
+          return;
+        }
+
+        // Підсвітка при зміні
+        if (JSON.stringify(row) !== JSON.stringify(lastRow)) {
+          scoreboard.classList.add("highlight");
+          setTimeout(() => scoreboard.classList.remove("highlight"), 800);
+          lastRow = row;
+        }
+
         scoreboard.innerHTML = row
-          .map((cell, i) => `<div><span class="label">${rows[0][i] || ""}:</span> ${cell}</div>`)
+          .map((cell, i) => `<div><span class="label">${headers[i]}:</span> ${cell}</div>`)
           .join("");
       } catch (err) {
         scoreboard.innerHTML = "⚠️ Помилка завантаження даних";
@@ -80,7 +107,7 @@
     loadData();
     setInterval(loadData, 3000);
 
-    // 🍁 Анимация падающих листьев
+    // 🍁 Анімація падаючих листочків
     function createLeaf() {
       const leaf = document.createElement("div");
       leaf.classList.add("leaf");
