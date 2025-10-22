@@ -8,7 +8,7 @@
     body {
       margin: 0;
       padding: 0;
-      background: radial-gradient(ellipse at center, #111 0%, #000 100%);
+      background: radial-gradient(circle at center, #111 0%, #000 100%);
       color: #fff;
       font-family: "Segoe UI", sans-serif;
       overflow: hidden;
@@ -35,6 +35,7 @@
       font-size: 2rem;
       backdrop-filter: blur(10px);
       min-width: 50vw;
+      transition: 0.3s;
     }
 
     .label {
@@ -80,9 +81,9 @@
   <div class="scoreboard" id="scoreboard">Завантаження...</div>
 
   <script>
-    // 🔗 Твоя таблиця з правильним GID
+    // 🔗 Твоя таблиця (правильний JSON-формат)
     const sheetUrl =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/gviz/tq?tqx=out:json&gid=910619786";
+      "https://docs.google.com/spreadsheets/d/1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4/gviz/tq?tqx=out:json&gid=910619786";
 
     const scoreboard = document.getElementById("scoreboard");
     let lastRow = [];
@@ -116,7 +117,7 @@
           lastRow = row;
         }
 
-        // Форматування рядка
+        // Форматування даних
         scoreboard.innerHTML = row
           .map(
             (cell, i) =>
