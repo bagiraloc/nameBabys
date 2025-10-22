@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Золота Осінь 2025 🍁</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(ellipse at center, #111 0%, #000 100%);
+      color: #fff;
+      font-family: "Segoe UI", sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 30px;
+      letter-spacing: 3px;
+      text-shadow: 0 0 10px gold;
+    }
+
+    .scoreboard {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px 60px;
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+      text-align: center;
+      font-size: 2rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .label {
+      color: #ffd700;
+      margin-right: 10px;
+    }
+
+    .leaf {
+      position: fixed;
+      top: -10%;
+      font-size: 1.5rem;
+      color: #ffb347;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Золота Осінь 2025</h1>
+  <div class="scoreboard" id="scoreboard">Завантаження...</div>
+
+  <script>
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/pub?output=csv";
+    const scoreboard = document.getElementById("scoreboard");
+
+    async function loadData() {
+      try {
+        const response = await fetch(sheetUrl);
+        const text = await response.text();
+        const rows = text.split("\n").map(r => r.split(","));
+        const row = rows[6]; // строка 7 (нумерация с 0)
+        scoreboard.innerHTML = row
+          .map((cell, i) => `<div><span class="label">${rows[0][i] || ""}:</span> ${cell}</div>`)
+          .join("");
+      } catch (err) {
+        scoreboard.innerHTML = "⚠️ Помилка завантаження даних";
+      }
+    }
+
+    loadData();
+    setInterval(loadData, 3000);
+
+    // 🍁 Анимация падающих листьев
+    function createLeaf() {
+      const leaf = document.createElement("div");
+      leaf.classList.add("leaf");
+      leaf.textContent = "🍁";
+      leaf.style.left = Math.random() * 100 + "vw";
+      leaf.style.animationDuration = 5 + Math.random() * 5 + "s";
+      leaf.style.fontSize = 20 + Math.random() * 20 + "px";
+      document.body.appendChild(leaf);
+      setTimeout(() => leaf.remove(), 10000);
+    }
+    setInterval(createLeaf, 500);
+  </script>
+</body>
+</html>
