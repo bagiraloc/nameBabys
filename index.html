@@ -1,247 +1,191 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Золота Осінь 2025 — Табло оцінок</title>
 <style>
-  :root{
-    --bg:#0b0f13;
-    --panel:#0f1720;
-    --muted:#9aa4ad;
-    --accent:#ffb86b;
-    --card:#0e1419;
-    --glass: rgba(255,255,255,0.03);
-    --accent-2: #ff7b7b;
-  }
-  html,body{
-    height:100%;
-    margin:0;
-    background: radial-gradient(1200px 600px at 10% 10%, rgba(255,120,40,0.04), transparent 8%),
-                radial-gradient(900px 500px at 90% 80%, rgba(100,40,255,0.02), transparent 6%),
-                var(--bg);
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    color:#e6eef6;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: radial-gradient(ellipse at center, #0b0f13 0%, #050709 100%);
+    color: #f2f2f2;
+    font-family: "Segoe UI", Inter, system-ui, sans-serif;
+    overflow: hidden;
   }
 
-  /* container */
-  .wrap{
-    max-width:1200px;
-    margin:36px auto;
-    padding:28px;
-    box-sizing:border-box;
+  .container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
   }
 
-  header{
-    display:flex;
-    align-items:center;
-    gap:16px;
-    margin-bottom:18px;
-  }
-  .logo{
-    width:68px;
-    height:68px;
-    border-radius:12px;
-    background: linear-gradient(135deg,#2b3948 0%, #16202a 100%);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow: 0 6px 18px rgba(2,6,12,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
-    border:1px solid rgba(255,255,255,0.03);
-    font-weight:700;
-    color:var(--accent);
-    font-size:18px;
-  }
-  h1{
-    margin:0;
-    font-size:20px;
-    letter-spacing:0.2px;
-  }
-  .sub{
-    color:var(--muted);
-    font-size:13px;
-    margin-top:4px;
-  }
-  .meta{
-    margin-left:auto;
-    text-align:right;
-    color:var(--muted);
-    font-size:13px;
-  }
-  .meta .time{color:var(--accent); font-weight:600; display:block; font-size:14px;}
-
-  /* board */
-  .board{
-    margin-top:18px;
-    display:grid;
-    grid-template-columns: 1fr;
-    gap:14px;
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #ffb86b;
+    letter-spacing: 1px;
   }
 
-  .card{
-    background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
-    border-radius:14px;
-    padding:14px;
-    box-shadow: 0 8px 30px rgba(3,7,10,0.55);
-    border:1px solid rgba(255,255,255,0.03);
-    backdrop-filter: blur(6px);
+  .gymnast {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
   }
 
-  .table {
-    width:100%;
-    border-collapse: collapse;
-    font-size:15px;
-    overflow:auto;
-  }
-  .table thead th{
-    text-align:left;
-    font-size:12px;
-    text-transform:uppercase;
-    letter-spacing:0.9px;
-    color:var(--muted);
-    padding:10px 12px;
-    font-weight:600;
-    background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
-    position:sticky;
-    top:0;
-    z-index:1;
-  }
-  .table tbody tr{
-    border-bottom: 1px dashed rgba(255,255,255,0.02);
-    transition: background 240ms ease;
-  }
-  .table td{
-    padding:12px;
-    vertical-align:middle;
-    color: #dce9f8;
-  }
-  .rank{
-    width:56px;
-    font-weight:700;
-    font-size:18px;
-    color:var(--accent);
-  }
-  .name{
-    font-weight:600;
-  }
-  .score{
-    font-weight:700;
-    font-size:16px;
-    text-align:right;
-    width:120px;
+  .team {
+    font-size: 1.5rem;
+    color: #ccc;
+    margin-bottom: 1.5rem;
   }
 
-  /* animations for updated cells */
-  .flash {
-    animation: flashBG 1s ease;
-  }
-  @keyframes flashBG{
-    0% { background: linear-gradient(90deg, rgba(255,255,80,0.06), rgba(255,255,255,0.01)); transform: translateY(-4px); }
-    100% { background: transparent; transform: none; }
-  }
-
-  /* small responsive */
-  @media (min-width:900px){
-    .board{ grid-template-columns: 1fr 380px; align-items:start; }
+  .score {
+    font-size: 6rem;
+    font-weight: 900;
+    color: #ff8a4b;
+    text-shadow: 0 0 20px rgba(255, 138, 75, 0.7);
+    animation: fadeIn 1s ease forwards;
   }
 
-  /* right panel */
-  .right-panel{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
+  .fade {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.6s ease;
   }
-  .stat{
-    padding:12px;
-    border-radius:10px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
-    border:1px solid rgba(255,255,255,0.02);
+  .fade.show {
+    opacity: 1;
+    transform: scale(1);
   }
-  .stat h3{ margin:0; font-size:13px; color:var(--muted) }
-  .big{ font-size:28px; font-weight:800; color:var(--accent); margin-top:8px; }
 
-  /* leaves animation layer */
-  .leaves-layer{
-    pointer-events:none;
-    position:fixed;
-    inset:0;
-    z-index:2;
-    overflow:hidden;
+  .leaves-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
   }
-  .leaf{
-    position:absolute;
-    top:-10vh;
+
+  .leaf {
+    position: absolute;
+    top: -10vh;
     will-change: transform, opacity;
-    user-select:none;
-    transform-origin:center;
-    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.45));
-    opacity:0.9;
+    opacity: 0.9;
+    user-select: none;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.5));
   }
 
-  /* footer */
-  footer{
-    margin-top:18px;
-    color:var(--muted);
-    font-size:13px;
-    text-align:center;
-    opacity:0.9;
+  @keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.9);}
+    to {opacity: 1; transform: scale(1);}
   }
 
-  /* small helpful hint box */
-  .hint{
-    font-size:13px;
-    color:var(--muted);
-    display:flex;
-    gap:10px;
-    align-items:center;
+  footer {
+    position: absolute;
+    bottom: 10px;
+    font-size: 0.9rem;
+    color: #777;
+    text-align: center;
+    width: 100%;
   }
-  .dot{ width:10px; height:10px; border-radius:50%; background:var(--accent); display:inline-block; box-shadow:0 4px 12px rgba(255,184,107,0.09); }
 </style>
 </head>
 <body>
-  <div class="leaves-layer" id="leavesLayer" aria-hidden="true"></div>
+<div class="leaves-layer" id="leavesLayer"></div>
 
-  <div class="wrap">
-    <header>
-      <div class="logo">ЗО</div>
-      <div>
-        <h1>Золота Осінь 2025 — Табло оцінок</h1>
-        <div class="sub">Гімнастичні змагання · Автопідвантаження кожні 5 секунд</div>
-      </div>
+<div class="container">
+  <h1>Золота Осінь 2025 🍁</h1>
+  <div class="gymnast fade" id="gymnast">Завантаження...</div>
+  <div class="team fade" id="team"></div>
+  <div class="score fade" id="score"></div>
+</div>
 
-      <div class="meta">
-        <span class="time" id="lastUpdated">—</span>
-        <span class="muted">Таблиця з Google Sheets</span>
-      </div>
-    </header>
+<footer>Дані з Google Sheets · Автооновлення кожні 5 секунд</footer>
 
-    <div class="board">
-      <div class="card" id="mainCard" aria-live="polite">
-        <table class="table" id="scoresTable" role="table" aria-label="Оцінки гімнасток">
-          <thead>
-            <tr>
-              <th class="rank">#</th>
-              <th>Гімнастка</th>
-              <th>Команда</th>
-              <th class="score">Оцінка</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody">
-            <tr><td colspan="4" style="padding:40px; text-align:center; color:var(--muted)">Завантаження даних...</td></tr>
-          </tbody>
-        </table>
-      </div>
+<script>
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/gviz/tq?gid=910619786&range=A7:D&tqx=out:json";
+const REFRESH_MS = 5000;
 
-      <div class="right-panel">
-        <div class="stat card">
-          <h3>Найвища оцінка</h3>
-          <div class="big" id="bestScore">—</div>
-        </div>
-        <div class="stat card">
-          <h3>Найнижча оцінка</h3>
-          <div class="big" id="worstScore">—</div>
-        </div>
-        <div class="card hint">
-          <span class="dot" aria-hidden="true"></span>
+let index = 0;
+let gymnasts = [];
+
+function fetchData() {
+  fetch(SHEET_URL)
+    .then(r => r.text())
+    .then(txt => {
+      const json = JSON.parse(txt.substring(txt.indexOf("{"), txt.lastIndexOf("}") + 1));
+      const table = json.table;
+      gymnasts = table.rows.map(r => r.c.map(c => c ? c.v : ""));
+      if (gymnasts.length > 0) showNextGymnast();
+    })
+    .catch(err => console.error("Помилка завантаження:", err));
+}
+
+function showNextGymnast() {
+  if (gymnasts.length === 0) return;
+
+  const g = gymnasts[index];
+  const name = g[0] || "—";
+  const team = g[1] || "";
+  const score = g[g.length - 1] || "";
+
+  const nameEl = document.getElementById("gymnast");
+  const teamEl = document.getElementById("team");
+  const scoreEl = document.getElementById("score");
+
+  [nameEl, teamEl, scoreEl].forEach(el => el.classList.remove("show"));
+
+  setTimeout(() => {
+    nameEl.textContent = name;
+    teamEl.textContent = team;
+    scoreEl.textContent = score;
+    [nameEl, teamEl, scoreEl].forEach(el => el.classList.add("show"));
+  }, 500);
+
+  index = (index + 1) % gymnasts.length;
+}
+
+setInterval(() => {
+  showNextGymnast();
+}, REFRESH_MS);
+
+fetchData();
+setInterval(fetchData, 30000); // оновлення даних кожні 30 секунд
+
+// 🍁 Листочки
+const colors = ["#ffb86b", "#ff8a4b", "#ff6b6b", "#e07a5f", "#ff9f43"];
+const leavesLayer = document.getElementById("leavesLayer");
+
+function spawnLeaf() {
+  const leaf = document.createElement("div");
+  leaf.className = "leaf";
+  leaf.innerHTML = "🍁";
+  leaf.style.fontSize = Math.random() * 20 + 20 + "px";
+  leaf.style.left = Math.random() * 100 + "vw";
+  leaf.style.color = colors[Math.floor(Math.random() * colors.length)];
+  leavesLayer.appendChild(leaf);
+
+  const duration = 8000 + Math.random() * 6000;
+  const horizontal = Math.random() * 50 - 25;
+
+  leaf.animate([
+    { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
+    { transform: `translate(${horizontal}px, 100vh) rotate(${Math.random() * 360}deg)`, opacity: 0.8 }
+  ], {
+    duration,
+    easing: "ease-in",
+    fill: "forwards"
+  });
+
+  setTimeout(() => leaf.remove(), duration);
+}
+
+setInterval(spawnLeaf, 300);
+</script>
+</body>
+</html>
