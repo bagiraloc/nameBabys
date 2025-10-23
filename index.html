@@ -29,10 +29,8 @@
   .score{font-size:96px;line-height:1;margin-top:18px;color:var(--score);text-shadow:0 10px 40px rgba(255,138,75,0.12);opacity:0;transform:scale(.95);transition:all .6s cubic-bezier(.2,.8,.2,1)}
   .visible{opacity:1;transform:none}
   footer{position:absolute;bottom:8px;left:0;right:0;text-align:center;color:var(--muted);font-size:13px}
-  /* leaves */
   .leaves{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden}
   .leaf{position:absolute;top:-20vh;font-size:28px;will-change:transform,opacity;opacity:0.95;filter:drop-shadow(0 8px 20px rgba(0,0,0,0.6))}
-  /* small responsive */
   @media (max-width:600px){ .score{font-size:56px} .name{font-size:28px} }
 </style>
 </head>
@@ -54,50 +52,50 @@
 
 <script>
 
-const PUB_HTML = "https://docs.google.com/spreadsheets/d/1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4/edit?gid=910619786#gid=910619786&single=true";
-const GVIZ_JSON = "https://docs.google.com/spreadsheets/d/1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4/edit?gid=910619786#gid=910619786&tqx=out:json";
+// --- налаштування ---
+const SHEET_NAME = "екран"; // назва листа у таблиці
+const GVIZ_JSON = `https://docs.google.com/spreadsheets/d/1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&tqx=out:json`;
+const PUB_HTML = `https://docs.google.com/spreadsheets/d/1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4/pubhtml?gid=910619786&single=true`;
 
-const REFRESH = 5000; // кожні 5 секунд
-const ROW_TO_SHOW_INDEX = 6; // ← номер рядка для показу (0 = перший)
+const REFRESH = 5000;       // оновлення кожні 5 секунд
+const ROW_TO_SHOW_INDEX = 6; // це 7-й рядок (B7:H7)
+const RANGE_START = 1;       // B = індекс 1
+const RANGE_END = 7;         // H = індекс 7
 
 const nameEl = document.getElementById("name");
 const teamEl = document.getElementById("team");
 const scoreEl = document.getElementById("score");
 const statusEl = document.getElementById("status");
 
-// Робимо дві спроби: 1) gviz JSON 2) pubhtml парсинг
+// ---------- отримання GViz ----------
 async function fetchGviz(){
   try {
     const r = await fetch(GVIZ_JSON, {cache: "no-store"});
     if (!r.ok) throw new Error("gviz fetch failed: " + r.status);
     const txt = await r.text();
-    // gviz повертає JS-виклик, треба вичистити:
     const jsonText = txt.replace(/^[^{]*({[\s\S]*})\);?[\s\n]*$/,'$1');
-    const obj = JSON.parse(jsonText);
-    return obj;
+    return JSON.parse(jsonText);
   } catch (e){
     console.warn("gviz failed", e);
     throw e;
   }
 }
 
+// ---------- резерв: парсинг HTML ----------
 async function fetchPubHtmlAndParse(){
   try {
     const r = await fetch(PUB_HTML, {cache: "no-store"});
     if (!r.ok) throw new Error("pubhtml fetch failed: " + r.status);
     const html = await r.text();
-    // парсимо HTML за допомогою DOMParser
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
-    // публічний pubhtml містить таблицю з class="waffle" або просто <table>
-    // знайдемо першу таблицю з даними
     const table = doc.querySelector("table");
     if (!table) throw new Error("table not found in pubhtml");
     const trs = Array.from(table.querySelectorAll("tr"));
-    // Якщо таблиця має заголовки, треба знайти 7-й фізичний рядок
     const target = trs[ROW_TO_SHOW_INDEX];
     if (!target) throw new Error("row not found in pubhtml: index " + ROW_TO_SHOW_INDEX);
-    const cells = Array.from(target.querySelectorAll("td,th")).map(td => td.textContent.trim());
+    const allCells = Array.from(target.querySelectorAll("td,th")).map(td => td.textContent.trim());
+    const cells = allCells.slice(RANGE_START, RANGE_END + 1);
     return {fromPubHtml:true, cells};
   } catch (e){
     console.warn("pubhtml failed", e);
@@ -105,20 +103,16 @@ async function fetchPubHtmlAndParse(){
   }
 }
 
+// ---------- показ даних ----------
 function showDataFromCells(cells){
-  // Логіку відображення можна підлаштувати залежно від структури:
-  // Припустимо: [Ім'я, Команда, ..., Оцінка] або інша довжина.
-  // Візьмемо перші 2 як name/team, останнє як score.
   const name = cells[0] || "—";
   const team = cells[1] || "";
-  const score = cells.length > 2 ? cells[cells.length - 1] : (cells[1] || "—");
+  const score = cells[cells.length - 1] || "—";
 
-  // плавна анімація появи
   nameEl.textContent = name;
   teamEl.textContent = team;
   scoreEl.textContent = score;
 
-  // додати клас visible для плавної появи
   setTimeout(()=> {
     nameEl.classList.add("visible");
     teamEl.classList.add("visible");
@@ -136,26 +130,24 @@ function showError(msg){
   console.error(msg);
 }
 
-// Головна функція оновлення: спочатку gviz -> якщо ні, pubhtml
+// ---------- головне оновлення ----------
 async function updateOnce(){
-  // приховати попередню анімацію
   nameEl.classList.remove("visible");
   teamEl.classList.remove("visible");
   scoreEl.classList.remove("visible");
 
   try {
-    // 1) пробуємо gviz JSON
     const g = await fetchGviz();
-    // парсимо таблицю
     const rows = (g.table && g.table.rows) ? g.table.rows : [];
-    if (!rows || rows.length === 0) throw new Error("no rows in gviz");
+    if (!rows.length) throw new Error("no rows in gviz");
     if (rows.length <= ROW_TO_SHOW_INDEX) throw new Error("gviz: not enough rows ("+rows.length+")");
+
     const rowObj = rows[ROW_TO_SHOW_INDEX];
-    const cells = rowObj.c.map(c => (c && c.v !== undefined) ? String(c.v).trim() : "");
+    const allCells = rowObj.c.map(c => (c && c.v !== undefined) ? String(c.v).trim() : "");
+    const cells = allCells.slice(RANGE_START, RANGE_END + 1);
     showDataFromCells(cells);
     return;
   } catch (e1){
-    // gviz не вийшло — пробуємо pubhtml
     try {
       const pub = await fetchPubHtmlAndParse();
       if (pub && pub.cells) {
@@ -170,11 +162,10 @@ async function updateOnce(){
   }
 }
 
-// перший виклик + інтервал
 updateOnce();
 setInterval(updateOnce, REFRESH);
 
-// ---------- Листочки -----------
+// ---------- листочки 🍁 ----------
 const leafChars = ["🍁","🍂","🍃"];
 const leavesLayer = document.getElementById('leaves');
 
@@ -187,15 +178,13 @@ function spawnLeaf(){
   el.style.fontSize = size + 'px';
   el.style.left = (Math.random()*110 - 5) + 'vw';
   const dur = 6000 + Math.random()*9000;
-  el.style.opacity = 0.9;
   leavesLayer.appendChild(el);
 
-  // анімація через Web Animations API
   const sway = (Math.random()*120 - 60);
   el.animate([
     { transform: `translateY(-10vh) rotate(0deg)`, opacity: 1 },
     { transform: `translateY(110vh) translateX(${sway}px) rotate(${180+Math.random()*360}deg)`, opacity: 0.85 }
-  ], { duration: dur, easing: 'ease-in', iterations: 1, fill: 'forwards' });
+  ], { duration: dur, easing: 'ease-in', fill: 'forwards' });
 
   setTimeout(()=> el.remove(), dur+50);
 }
@@ -205,10 +194,10 @@ setInterval(()=>{
   for (let i=0;i<n;i++) spawnLeaf();
 }, 700);
 
-// збереження доступності: якщо prefers-reduced-motion
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   document.getElementById('leaves').style.display = 'none';
 }
+
 </script>
 </body>
 </html>
