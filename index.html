@@ -1,142 +1,122 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Золота Осінь 2025 🍁</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at center, #1a1a1a, #000);
-      color: #fff;
+      height: 100vh;
+      background: linear-gradient(180deg, #000, #111);
+      color: #ffd700;
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       overflow: hidden;
-      text-align: center;
+      position: relative;
     }
 
     h1 {
       font-size: 3rem;
-      margin-top: 100px;
-      text-shadow: 0 0 20px gold;
-      animation: glow 2s ease-in-out infinite alternate;
+      text-shadow: 0 0 25px #ffcc00;
+      margin-bottom: 30px;
+      text-align: center;
     }
 
-    @keyframes glow {
-      from { text-shadow: 0 0 10px gold; }
-      to { text-shadow: 0 0 30px #ffae00; }
+    #scoreboard {
+      background: rgba(255, 215, 0, 0.1);
+      border: 2px solid #ffcc00;
+      border-radius: 20px;
+      padding: 20px 40px;
+      text-align: center;
+      font-size: 1.5rem;
+      box-shadow: 0 0 25px rgba(255, 200, 0, 0.5);
+      transition: all 0.5s ease;
     }
 
-    .error, .loading {
-      background: rgba(255, 255, 255, 0.1);
-      border: 2px solid gold;
-      display: inline-block;
-      padding: 15px 25px;
-      border-radius: 15px;
-      margin-top: 40px;
-      font-size: 1.2rem;
-      color: gold;
+    .error {
+      color: #ff4444;
+      font-weight: bold;
     }
 
-    table {
-      margin: 40px auto;
-      border-collapse: collapse;
-      min-width: 60%;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 15px;
-      overflow: hidden;
-    }
-
-    th, td {
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 12px 20px;
-    }
-
-    th {
-      background: rgba(255, 215, 0, 0.2);
-      color: gold;
-    }
-
-    tr:nth-child(even) {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
+    /* Падаючі кленові листки 🍁 */
     .leaf {
       position: absolute;
-      width: 30px;
-      height: 30px;
-      background-image: url('https://cdn-icons-png.flaticon.com/512/415/415733.png');
-      background-size: cover;
+      top: -50px;
+      color: orange;
+      font-size: 24px;
       animation: fall linear infinite;
-      opacity: 0.8;
     }
 
     @keyframes fall {
       0% {
-        transform: translateY(-10vh) rotate(0deg);
+        transform: translateY(-50px) rotate(0deg);
         opacity: 1;
       }
       100% {
-        transform: translateY(110vh) rotate(360deg);
-        opacity: 0.4;
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
       }
     }
   </style>
 </head>
 <body>
-  <h1>Золота Осінь 2025 🍂</h1>
-  <div id="status" class="loading">Завантаження даних...</div>
-  <div id="table-container"></div>
+  <h1>Золота Осінь 2025</h1>
+  <div id="scoreboard">Завантаження...</div>
 
   <script>
-    // URL Google таблиці
-    const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/gviz/tq?tqx=out:json";
+    // 🔗 Посилання на JSON Google Sheets (обов’язково має бути /gviz/tq?tqx=out:json)
+    const sheetURL =
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/gviz/tq?tqx=out:json&gid=910619786";
 
-    async function loadData() {
+    const scoreboard = document.getElementById("scoreboard");
+
+    async function fetchData() {
       try {
         const res = await fetch(sheetURL);
         const text = await res.text();
-        const json = JSON.parse(text.substring(47).slice(0, -2));
 
-        const table = document.createElement("table");
-        const headerRow = document.createElement("tr");
+        // Google додає префікс до JSON — прибираємо його
+        const json = JSON.parse(text.substr(47).slice(0, -2));
 
-        // Створюємо заголовки
-        json.table.cols.forEach(col => {
-          if (col.label) {
-            const th = document.createElement("th");
-            th.textContent = col.label;
-            headerRow.appendChild(th);
-          }
-        });
-        table.appendChild(headerRow);
+        // Отримуємо всі рядки таблиці
+        const rows = json.table.rows;
 
-        // Додаємо рядки
-        json.table.rows.forEach(row => {
-          const tr = document.createElement("tr");
-          row.c.forEach(cell => {
-            const td = document.createElement("td");
-            td.textContent = cell ? cell.v : "";
-            tr.appendChild(td);
-          });
-          table.appendChild(tr);
-        });
+        // 7 рядок = індекс 6 (рахунок починається з 0)
+        const row = rows[6];
+        if (!row) throw new Error("Рядок 7 не знайдено");
 
-        document.getElementById("status").remove();
-        document.getElementById("table-container").appendChild(table);
+        // Витягуємо клітинки
+        const values = row.c.map(c => (c ? c.v : ""));
+
+        scoreboard.innerHTML = `
+          <div><strong>Ім’я:</strong> ${values[0]}</div>
+          <div><strong>Вправа:</strong> ${values[1]}</div>
+          <div><strong>Оцінка:</strong> ${values[2]}</div>
+          <div><strong>Суддя 1:</strong> ${values[3]}</div>
+          <div><strong>Суддя 2:</strong> ${values[4]}</div>
+          <div><strong>Суддя 3:</strong> ${values[5]}</div>
+        `;
       } catch (err) {
-        document.getElementById("status").textContent = "⚠️ Помилка завантаження даних";
+        scoreboard.innerHTML = `<div class="error">⚠️ Помилка завантаження даних</div>`;
         console.error("Помилка:", err);
       }
     }
 
-    loadData();
+    // Оновлення кожні 3 секунди
+    fetchData();
+    setInterval(fetchData, 3000);
 
-    // 🍁 Ефект падіння листя
+    // 🍁 Генеруємо падаючі листки
     function createLeaf() {
-      const leaf = document.createElement('div');
-      leaf.classList.add('leaf');
-      leaf.style.left = Math.random() * 100 + 'vw';
-      leaf.style.animationDuration = (Math.random() * 5 + 5) + 's';
+      const leaf = document.createElement("div");
+      leaf.classList.add("leaf");
+      leaf.innerHTML = "🍁";
+      leaf.style.left = Math.random() * 100 + "vw";
+      leaf.style.animationDuration = 5 + Math.random() * 5 + "s";
       document.body.appendChild(leaf);
       setTimeout(() => leaf.remove(), 10000);
     }
