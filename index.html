@@ -1,99 +1,216 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Золота Осінь 2025 🍁</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Золота Осінь 2025 — Екран</title>
 <style>
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: "Poppins", sans-serif;
-    background: radial-gradient(circle at center, #111 0%, #000 100%);
-    color: #f5c56a;
-    overflow: hidden;
-    text-align: center;
+  :root{
+    --bg:#060708;
+    --accent:#ffb86b;
+    --muted:#9aa4ad;
+    --score:#ff8a4b;
   }
-  h1 {
-    font-size: 3em;
-    margin-top: 20vh;
-    text-shadow: 0 0 20px #f5c56a;
-    animation: fadeIn 2s ease;
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:#fff;background:radial-gradient(800px 400px at 50% 40%, rgba(255,120,40,0.03), transparent 10%), var(--bg);overflow:hidden}
+  .center{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    text-align:center;
+    padding:28px;
+    box-sizing:border-box;
   }
-  p {
-    margin-top: 10px;
-    color: #ccc;
-    font-size: 1em;
-  }
-  #data {
-    font-size: 2.2em;
-    color: #fff;
-    margin-top: 20px;
-    animation: fadeIn 1s ease;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Падаючі листочки 🍁 */
-  .leaf {
-    position: fixed;
-    top: -10vh;
-    width: 25px;
-    height: 25px;
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/7/7b/Maple_Leaf.svg');
-    background-size: cover;
-    opacity: 0.8;
-    animation: fall linear infinite;
-  }
-  @keyframes fall {
-    0% { transform: translateY(0) rotate(0deg); }
-    100% { transform: translateY(110vh) rotate(360deg); }
-  }
+  h1{margin:0;font-size:32px;color:var(--accent);text-shadow:0 6px 30px rgba(0,0,0,0.6)}
+  .sub{color:var(--muted);margin-top:8px;font-size:14px}
+  .name{font-weight:700;font-size:38px;margin-top:40px;opacity:0;transform:translateY(10px);transition:all .45s ease}
+  .team{font-size:18px;color:#d1dbe6;margin-top:6px;opacity:0;transform:translateY(8px);transition:all .45s ease}
+  .score{font-size:96px;line-height:1;margin-top:18px;color:var(--score);text-shadow:0 10px 40px rgba(255,138,75,0.12);opacity:0;transform:scale(.95);transition:all .6s cubic-bezier(.2,.8,.2,1)}
+  .visible{opacity:1;transform:none}
+  footer{position:absolute;bottom:8px;left:0;right:0;text-align:center;color:var(--muted);font-size:13px}
+  /* leaves */
+  .leaves{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+  .leaf{position:absolute;top:-20vh;font-size:28px;will-change:transform,opacity;opacity:0.95;filter:drop-shadow(0 8px 20px rgba(0,0,0,0.6))}
+  /* small responsive */
+  @media (max-width:600px){ .score{font-size:56px} .name{font-size:28px} }
 </style>
 </head>
 <body>
-  <h1>Золота Осінь 2025</h1>
-  <div id="data">Завантаження даних...</div>
-  <p>Дані з Google Sheets · Автооновлення кожні 5 секунд</p>
+  <div class="leaves" id="leaves"></div>
+
+  <div class="center" role="main" aria-live="polite">
+    <h1>Золота Осінь 2025 🍁</h1>
+    <div class="sub">Дані з Google Sheets · Автооновлення кожні 5 секунд</div>
+
+    <div id="display">
+      <div id="name" class="name">Завантаження...</div>
+      <div id="team" class="team"></div>
+      <div id="score" class="score">—</div>
+    </div>
+  </div>
+
+  <footer id="status">Підключаюся...</footer>
 
 <script>
-const sheetId = '2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK';
-const sheetName = 'Екран';
-const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+/*
+  Вставлена публічна адреса (твоя). Я буду намагатись спочатку з gviz/tq (JSON),
+  якщо не вийде — зроблю fetch до pubhtml і розпаршу HTML.
+*/
+const PUB_HTML = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/pubhtml?gid=910619786&single=true";
+const GVIZ_JSON = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/gviz/tq?gid=910619786&tqx=out:json";
 
-async function loadData() {
+const REFRESH = 5000; // кожні 5 секунд
+const ROW_TO_SHOW_INDEX = 6; // 0-based -> 6 означає рядок 7
+
+const nameEl = document.getElementById("name");
+const teamEl = document.getElementById("team");
+const scoreEl = document.getElementById("score");
+const statusEl = document.getElementById("status");
+
+// Робимо дві спроби: 1) gviz JSON 2) pubhtml парсинг
+async function fetchGviz(){
   try {
-    const res = await fetch(url);
-    const text = await res.text();
-    const json = JSON.parse(text.substr(47).slice(0, -2));
-    const rows = json.table.rows;
-
-    if (rows.length >= 7) {
-      const row = rows[6].c.map(c => c ? c.v : '').join(' · ');
-      document.getElementById("data").textContent = row;
-    } else {
-      document.getElementById("data").textContent = "Недостатньо даних у таблиці";
-    }
-  } catch (e) {
-    document.getElementById("data").textContent = "Помилка завантаження 😔";
-    console.error(e);
+    const r = await fetch(GVIZ_JSON, {cache: "no-store"});
+    if (!r.ok) throw new Error("gviz fetch failed: " + r.status);
+    const txt = await r.text();
+    // gviz повертає JS-виклик, треба вичистити:
+    const jsonText = txt.replace(/^[^{]*({[\s\S]*})\);?[\s\n]*$/,'$1');
+    const obj = JSON.parse(jsonText);
+    return obj;
+  } catch (e){
+    console.warn("gviz failed", e);
+    throw e;
   }
 }
 
-loadData();
-setInterval(loadData, 5000);
+async function fetchPubHtmlAndParse(){
+  try {
+    const r = await fetch(PUB_HTML, {cache: "no-store"});
+    if (!r.ok) throw new Error("pubhtml fetch failed: " + r.status);
+    const html = await r.text();
+    // парсимо HTML за допомогою DOMParser
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    // публічний pubhtml містить таблицю з class="waffle" або просто <table>
+    // знайдемо першу таблицю з даними
+    const table = doc.querySelector("table");
+    if (!table) throw new Error("table not found in pubhtml");
+    const trs = Array.from(table.querySelectorAll("tr"));
+    // Якщо таблиця має заголовки, треба знайти 7-й фізичний рядок
+    const target = trs[ROW_TO_SHOW_INDEX];
+    if (!target) throw new Error("row not found in pubhtml: index " + ROW_TO_SHOW_INDEX);
+    const cells = Array.from(target.querySelectorAll("td,th")).map(td => td.textContent.trim());
+    return {fromPubHtml:true, cells};
+  } catch (e){
+    console.warn("pubhtml failed", e);
+    throw e;
+  }
+}
 
-// Падаючі листочки 🍁
-for (let i = 0; i < 25; i++) {
-  let leaf = document.createElement("div");
-  leaf.className = "leaf";
-  leaf.style.left = Math.random() * 100 + "vw";
-  leaf.style.animationDuration = 5 + Math.random() * 10 + "s";
-  leaf.style.animationDelay = Math.random() * 10 + "s";
-  leaf.style.transform = `rotate(${Math.random()*360}deg)`;
-  document.body.appendChild(leaf);
+function showDataFromCells(cells){
+  // Логіку відображення можна підлаштувати залежно від структури:
+  // Припустимо: [Ім'я, Команда, ..., Оцінка] або інша довжина.
+  // Візьмемо перші 2 як name/team, останнє як score.
+  const name = cells[0] || "—";
+  const team = cells[1] || "";
+  const score = cells.length > 2 ? cells[cells.length - 1] : (cells[1] || "—");
+
+  // плавна анімація появи
+  nameEl.textContent = name;
+  teamEl.textContent = team;
+  scoreEl.textContent = score;
+
+  // додати клас visible для плавної появи
+  setTimeout(()=> {
+    nameEl.classList.add("visible");
+    teamEl.classList.add("visible");
+    scoreEl.classList.add("visible");
+  }, 20);
+
+  statusEl.textContent = "Оновлено: " + new Date().toLocaleTimeString();
+}
+
+function showError(msg){
+  nameEl.textContent = "Помилка завантаження";
+  teamEl.textContent = "";
+  scoreEl.textContent = "—";
+  statusEl.textContent = msg;
+  console.error(msg);
+}
+
+// Головна функція оновлення: спочатку gviz -> якщо ні, pubhtml
+async function updateOnce(){
+  // приховати попередню анімацію
+  nameEl.classList.remove("visible");
+  teamEl.classList.remove("visible");
+  scoreEl.classList.remove("visible");
+
+  try {
+    // 1) пробуємо gviz JSON
+    const g = await fetchGviz();
+    // парсимо таблицю
+    const rows = (g.table && g.table.rows) ? g.table.rows : [];
+    if (!rows || rows.length === 0) throw new Error("no rows in gviz");
+    if (rows.length <= ROW_TO_SHOW_INDEX) throw new Error("gviz: not enough rows ("+rows.length+")");
+    const rowObj = rows[ROW_TO_SHOW_INDEX];
+    const cells = rowObj.c.map(c => (c && c.v !== undefined) ? String(c.v).trim() : "");
+    showDataFromCells(cells);
+    return;
+  } catch (e1){
+    // gviz не вийшло — пробуємо pubhtml
+    try {
+      const pub = await fetchPubHtmlAndParse();
+      if (pub && pub.cells) {
+        showDataFromCells(pub.cells);
+        return;
+      } else {
+        throw new Error("pubhtml parse returned nothing");
+      }
+    } catch (e2){
+      showError("Не вдається підвантажити дані. Перевір, чи таблиця публічна.");
+    }
+  }
+}
+
+// перший виклик + інтервал
+updateOnce();
+setInterval(updateOnce, REFRESH);
+
+// ---------- Листочки -----------
+const leafChars = ["🍁","🍂","🍃"];
+const leavesLayer = document.getElementById('leaves');
+
+function spawnLeaf(){
+  const el = document.createElement('div');
+  el.className = 'leaf';
+  const ch = leafChars[Math.floor(Math.random()*leafChars.length)];
+  el.textContent = ch;
+  const size = 18 + Math.random()*34;
+  el.style.fontSize = size + 'px';
+  el.style.left = (Math.random()*110 - 5) + 'vw';
+  const dur = 6000 + Math.random()*9000;
+  el.style.opacity = 0.9;
+  leavesLayer.appendChild(el);
+
+  // анімація через Web Animations API
+  const sway = (Math.random()*120 - 60);
+  el.animate([
+    { transform: `translateY(-10vh) rotate(0deg)`, opacity: 1 },
+    { transform: `translateY(110vh) translateX(${sway}px) rotate(${180+Math.random()*360}deg)`, opacity: 0.85 }
+  ], { duration: dur, easing: 'ease-in', iterations: 1, fill: 'forwards' });
+
+  setTimeout(()=> el.remove(), dur+50);
+}
+
+setInterval(()=>{
+  const n = Math.random() < 0.7 ? 1 : (Math.random() < 0.3 ? 2 : 0);
+  for (let i=0;i<n;i++) spawnLeaf();
+}, 700);
+
+// збереження доступності: якщо prefers-reduced-motion
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.getElementById('leaves').style.display = 'none';
 }
 </script>
 </body>
