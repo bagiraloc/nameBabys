@@ -1,191 +1,100 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Золота Осінь 2025 — Табло оцінок</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Золота Осінь 2025 🍁</title>
 <style>
-  html, body {
+  body {
     margin: 0;
     padding: 0;
-    height: 100%;
-    background: radial-gradient(ellipse at center, #0b0f13 0%, #050709 100%);
-    color: #f2f2f2;
-    font-family: "Segoe UI", Inter, system-ui, sans-serif;
+    font-family: "Poppins", sans-serif;
+    background: radial-gradient(circle at center, #111 0%, #000 100%);
+    color: #f5c56a;
     overflow: hidden;
-  }
-
-  .container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
     text-align: center;
   }
-
   h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #ffb86b;
-    letter-spacing: 1px;
+    font-size: 3em;
+    margin-top: 20vh;
+    text-shadow: 0 0 20px #f5c56a;
+    animation: fadeIn 2s ease;
   }
-
-  .gymnast {
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-  }
-
-  .team {
-    font-size: 1.5rem;
+  p {
+    margin-top: 10px;
     color: #ccc;
-    margin-bottom: 1.5rem;
+    font-size: 1em;
   }
-
-  .score {
-    font-size: 6rem;
-    font-weight: 900;
-    color: #ff8a4b;
-    text-shadow: 0 0 20px rgba(255, 138, 75, 0.7);
-    animation: fadeIn 1s ease forwards;
+  #data {
+    font-size: 2.2em;
+    color: #fff;
+    margin-top: 20px;
+    animation: fadeIn 1s ease;
   }
-
-  .fade {
-    opacity: 0;
-    transform: scale(0.9);
-    transition: all 0.6s ease;
-  }
-  .fade.show {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  .leaves-layer {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 1;
-  }
-
-  .leaf {
-    position: absolute;
-    top: -10vh;
-    will-change: transform, opacity;
-    opacity: 0.9;
-    user-select: none;
-    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.5));
-  }
-
   @keyframes fadeIn {
-    from {opacity: 0; transform: scale(0.9);}
-    to {opacity: 1; transform: scale(1);}
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
-  footer {
-    position: absolute;
-    bottom: 10px;
-    font-size: 0.9rem;
-    color: #777;
-    text-align: center;
-    width: 100%;
+  /* Падаючі листочки 🍁 */
+  .leaf {
+    position: fixed;
+    top: -10vh;
+    width: 25px;
+    height: 25px;
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/7/7b/Maple_Leaf.svg');
+    background-size: cover;
+    opacity: 0.8;
+    animation: fall linear infinite;
+  }
+  @keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(110vh) rotate(360deg); }
   }
 </style>
 </head>
 <body>
-<div class="leaves-layer" id="leavesLayer"></div>
-
-<div class="container">
-  <h1>Золота Осінь 2025 🍁</h1>
-  <div class="gymnast fade" id="gymnast">Завантаження...</div>
-  <div class="team fade" id="team"></div>
-  <div class="score fade" id="score"></div>
-</div>
-
-<footer>Дані з Google Sheets · Автооновлення кожні 5 секунд</footer>
+  <h1>Золота Осінь 2025</h1>
+  <div id="data">Завантаження даних...</div>
+  <p>Дані з Google Sheets · Автооновлення кожні 5 секунд</p>
 
 <script>
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/gviz/tq?gid=910619786&range=A7:D&tqx=out:json";
-const REFRESH_MS = 5000;
+const sheetId = '2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK';
+const sheetName = 'Екран';
+const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
 
-let index = 0;
-let gymnasts = [];
+async function loadData() {
+  try {
+    const res = await fetch(url);
+    const text = await res.text();
+    const json = JSON.parse(text.substr(47).slice(0, -2));
+    const rows = json.table.rows;
 
-function fetchData() {
-  fetch(SHEET_URL)
-    .then(r => r.text())
-    .then(txt => {
-      const json = JSON.parse(txt.substring(txt.indexOf("{"), txt.lastIndexOf("}") + 1));
-      const table = json.table;
-      gymnasts = table.rows.map(r => r.c.map(c => c ? c.v : ""));
-      if (gymnasts.length > 0) showNextGymnast();
-    })
-    .catch(err => console.error("Помилка завантаження:", err));
+    if (rows.length >= 7) {
+      const row = rows[6].c.map(c => c ? c.v : '').join(' · ');
+      document.getElementById("data").textContent = row;
+    } else {
+      document.getElementById("data").textContent = "Недостатньо даних у таблиці";
+    }
+  } catch (e) {
+    document.getElementById("data").textContent = "Помилка завантаження 😔";
+    console.error(e);
+  }
 }
 
-function showNextGymnast() {
-  if (gymnasts.length === 0) return;
+loadData();
+setInterval(loadData, 5000);
 
-  const g = gymnasts[index];
-  const name = g[0] || "—";
-  const team = g[1] || "";
-  const score = g[g.length - 1] || "";
-
-  const nameEl = document.getElementById("gymnast");
-  const teamEl = document.getElementById("team");
-  const scoreEl = document.getElementById("score");
-
-  [nameEl, teamEl, scoreEl].forEach(el => el.classList.remove("show"));
-
-  setTimeout(() => {
-    nameEl.textContent = name;
-    teamEl.textContent = team;
-    scoreEl.textContent = score;
-    [nameEl, teamEl, scoreEl].forEach(el => el.classList.add("show"));
-  }, 500);
-
-  index = (index + 1) % gymnasts.length;
-}
-
-setInterval(() => {
-  showNextGymnast();
-}, REFRESH_MS);
-
-fetchData();
-setInterval(fetchData, 30000); // оновлення даних кожні 30 секунд
-
-// 🍁 Листочки
-const colors = ["#ffb86b", "#ff8a4b", "#ff6b6b", "#e07a5f", "#ff9f43"];
-const leavesLayer = document.getElementById("leavesLayer");
-
-function spawnLeaf() {
-  const leaf = document.createElement("div");
+// Падаючі листочки 🍁
+for (let i = 0; i < 25; i++) {
+  let leaf = document.createElement("div");
   leaf.className = "leaf";
-  leaf.innerHTML = "🍁";
-  leaf.style.fontSize = Math.random() * 20 + 20 + "px";
   leaf.style.left = Math.random() * 100 + "vw";
-  leaf.style.color = colors[Math.floor(Math.random() * colors.length)];
-  leavesLayer.appendChild(leaf);
-
-  const duration = 8000 + Math.random() * 6000;
-  const horizontal = Math.random() * 50 - 25;
-
-  leaf.animate([
-    { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
-    { transform: `translate(${horizontal}px, 100vh) rotate(${Math.random() * 360}deg)`, opacity: 0.8 }
-  ], {
-    duration,
-    easing: "ease-in",
-    fill: "forwards"
-  });
-
-  setTimeout(() => leaf.remove(), duration);
+  leaf.style.animationDuration = 5 + Math.random() * 10 + "s";
+  leaf.style.animationDelay = Math.random() * 10 + "s";
+  leaf.style.transform = `rotate(${Math.random()*360}deg)`;
+  document.body.appendChild(leaf);
 }
-
-setInterval(spawnLeaf, 300);
 </script>
 </body>
 </html>
