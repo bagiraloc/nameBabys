@@ -11,7 +11,14 @@
     --muted:#9aa4ad;
     --score:#ff8a4b;
   }
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:#fff;background:radial-gradient(800px 400px at 50% 40%, rgba(255,120,40,0.03), transparent 10%), var(--bg);overflow:hidden}
+  html,body{
+    height:100%;
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    color:#fff;
+    background:radial-gradient(800px 400px at 50% 40%, rgba(255,120,40,0.03), transparent 10%), var(--bg);
+    overflow:hidden;
+  }
   .center{
     min-height:100vh;
     display:flex;
@@ -22,16 +29,66 @@
     padding:28px;
     box-sizing:border-box;
   }
-  h1{margin:0;font-size:32px;color:var(--accent);text-shadow:0 6px 30px rgba(0,0,0,0.6)}
+  h1{
+    margin:0;
+    font-size:32px;
+    color:var(--accent);
+    text-shadow:0 6px 30px rgba(0,0,0,0.6);
+  }
   .sub{color:var(--muted);margin-top:8px;font-size:14px}
-  .name{font-weight:700;font-size:38px;margin-top:40px;opacity:0;transform:translateY(10px);transition:all .45s ease}
-  .team{font-size:18px;color:#d1dbe6;margin-top:6px;opacity:0;transform:translateY(8px);transition:all .45s ease}
-  .score{font-size:96px;line-height:1;margin-top:18px;color:var(--score);text-shadow:0 10px 40px rgba(255,138,75,0.12);opacity:0;transform:scale(.95);transition:all .6s cubic-bezier(.2,.8,.2,1)}
+  .name{
+    font-weight:700;
+    font-size:38px;
+    margin-top:40px;
+    opacity:0;
+    transform:translateY(10px);
+    transition:all .45s ease;
+  }
+  .team{
+    font-size:18px;
+    color:#d1dbe6;
+    margin-top:6px;
+    opacity:0;
+    transform:translateY(8px);
+    transition:all .45s ease;
+  }
+  .score{
+    font-size:96px;
+    line-height:1;
+    margin-top:18px;
+    color:var(--score);
+    text-shadow:0 10px 40px rgba(255,138,75,0.12);
+    opacity:0;
+    transform:scale(.95);
+    transition:all .6s cubic-bezier(.2,.8,.2,1);
+  }
   .visible{opacity:1;transform:none}
-  footer{position:absolute;bottom:8px;left:0;right:0;text-align:center;color:var(--muted);font-size:13px}
-  .leaves{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden}
-  .leaf{position:absolute;top:-20vh;font-size:28px;will-change:transform,opacity;opacity:0.95;filter:drop-shadow(0 8px 20px rgba(0,0,0,0.6))}
-  @media (max-width:600px){ .score{font-size:56px} .name{font-size:28px} }
+  footer{
+    position:absolute;
+    bottom:8px;
+    left:0;right:0;
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
+  }
+  .leaves{
+    position:fixed;inset:0;
+    pointer-events:none;
+    z-index:2;
+    overflow:hidden;
+  }
+  .leaf{
+    position:absolute;
+    top:-20vh;
+    font-size:28px;
+    will-change:transform,opacity;
+    opacity:0.95;
+    filter:drop-shadow(0 8px 20px rgba(0,0,0,0.6));
+  }
+  @media (max-width:600px){
+    .score{font-size:56px}
+    .name{font-size:28px}
+  }
 </style>
 </head>
 <body>
@@ -39,7 +96,7 @@
 
   <div class="center" role="main" aria-live="polite">
     <h1>Золота Осінь 2025 🍁</h1>
-    <div class="sub">Свято краси </div>
+    <div class="sub">Свято краси</div>
 
     <div id="display">
       <div id="name" class="name">Завантаження...</div>
@@ -51,16 +108,15 @@
   <footer id="status">Підключаюся...</footer>
 
 <script>
-
 // --- налаштування ---
-const SHEET_NAME = "екран"; // назва листа у таблиці
-const GVIZ_JSON = `https://docs.google.com/spreadsheets/d/1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4/edit?gid=910619786#gid=910619786/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&tqx=out:json`;
-const PUB_HTML = `https://docs.google.com/spreadsheets/d/1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4/edit?gid=910619786#gid=910619786&single=true`;
+const SHEET_NAME = "екран"; // назва листа
+const GVIZ_JSON = `https://docs.google.com/spreadsheets/d/1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&tqx=out:json`;
+const PUB_HTML = `https://docs.google.com/spreadsheets/d/1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4/pubhtml?gid=910619786&single=true`;
 
-const REFRESH = 5000;       // оновлення кожні 5 секунд
-const ROW_TO_SHOW_INDEX = 6; // це 7-й рядок (B7;C7;D7;E7;G7;H7)
+const REFRESH = 5000;        // оновлення кожні 5 секунд
+const ROW_TO_SHOW_INDEX = 6; // 7-й рядок (індекс починається з 0)
 const RANGE_START = 1;       // B = індекс 1
-const RANGE_END = 7;         // H = індекс 7
+const RANGE_END = 6;         // G = індекс 6
 
 const nameEl = document.getElementById("name");
 const teamEl = document.getElementById("team");
@@ -95,7 +151,7 @@ async function fetchPubHtmlAndParse(){
     const target = trs[ROW_TO_SHOW_INDEX];
     if (!target) throw new Error("row not found in pubhtml: index " + ROW_TO_SHOW_INDEX);
     const allCells = Array.from(target.querySelectorAll("td,th")).map(td => td.textContent.trim());
-    const cells = allCells.slice(RANGE_START, RANGE_END + 1);
+    const cells = allCells.slice(RANGE_START, RANGE_END + 1); // B–G включно
     return {fromPubHtml:true, cells};
   } catch (e){
     console.warn("pubhtml failed", e);
@@ -144,7 +200,7 @@ async function updateOnce(){
 
     const rowObj = rows[ROW_TO_SHOW_INDEX];
     const allCells = rowObj.c.map(c => (c && c.v !== undefined) ? String(c.v).trim() : "");
-    const cells = allCells.slice(RANGE_START, RANGE_END + 1);
+    const cells = allCells.slice(RANGE_START, RANGE_END + 1); // B–G включно
     showDataFromCells(cells);
     return;
   } catch (e1){
@@ -162,6 +218,7 @@ async function updateOnce(){
   }
 }
 
+// перший виклик + інтервал
 updateOnce();
 setInterval(updateOnce, REFRESH);
 
@@ -197,7 +254,6 @@ setInterval(()=>{
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   document.getElementById('leaves').style.display = 'none';
 }
-
 </script>
 </body>
 </html>
