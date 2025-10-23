@@ -1,126 +1,247 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Золота Осінь 2025 🍁</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: linear-gradient(180deg, #000, #111);
-      color: #ffd700;
-      font-family: "Segoe UI", sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      position: relative;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Золота Осінь 2025 — Табло оцінок</title>
+<style>
+  :root{
+    --bg:#0b0f13;
+    --panel:#0f1720;
+    --muted:#9aa4ad;
+    --accent:#ffb86b;
+    --card:#0e1419;
+    --glass: rgba(255,255,255,0.03);
+    --accent-2: #ff7b7b;
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(255,120,40,0.04), transparent 8%),
+                radial-gradient(900px 500px at 90% 80%, rgba(100,40,255,0.02), transparent 6%),
+                var(--bg);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color:#e6eef6;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
 
-    h1 {
-      font-size: 3rem;
-      text-shadow: 0 0 25px #ffcc00;
-      margin-bottom: 30px;
-      text-align: center;
-    }
+  /* container */
+  .wrap{
+    max-width:1200px;
+    margin:36px auto;
+    padding:28px;
+    box-sizing:border-box;
+  }
 
-    #scoreboard {
-      background: rgba(255, 215, 0, 0.1);
-      border: 2px solid #ffcc00;
-      border-radius: 20px;
-      padding: 20px 40px;
-      text-align: center;
-      font-size: 1.5rem;
-      box-shadow: 0 0 25px rgba(255, 200, 0, 0.5);
-      transition: all 0.5s ease;
-    }
+  header{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    margin-bottom:18px;
+  }
+  .logo{
+    width:68px;
+    height:68px;
+    border-radius:12px;
+    background: linear-gradient(135deg,#2b3948 0%, #16202a 100%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 0 6px 18px rgba(2,6,12,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+    border:1px solid rgba(255,255,255,0.03);
+    font-weight:700;
+    color:var(--accent);
+    font-size:18px;
+  }
+  h1{
+    margin:0;
+    font-size:20px;
+    letter-spacing:0.2px;
+  }
+  .sub{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:4px;
+  }
+  .meta{
+    margin-left:auto;
+    text-align:right;
+    color:var(--muted);
+    font-size:13px;
+  }
+  .meta .time{color:var(--accent); font-weight:600; display:block; font-size:14px;}
 
-    .error {
-      color: #ff4444;
-      font-weight: bold;
-    }
+  /* board */
+  .board{
+    margin-top:18px;
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:14px;
+  }
 
-    /* Падаючі кленові листки 🍁 */
-    .leaf {
-      position: absolute;
-      top: -50px;
-      color: orange;
-      font-size: 24px;
-      animation: fall linear infinite;
-    }
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+    border-radius:14px;
+    padding:14px;
+    box-shadow: 0 8px 30px rgba(3,7,10,0.55);
+    border:1px solid rgba(255,255,255,0.03);
+    backdrop-filter: blur(6px);
+  }
 
-    @keyframes fall {
-      0% {
-        transform: translateY(-50px) rotate(0deg);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
-      }
-    }
-  </style>
+  .table {
+    width:100%;
+    border-collapse: collapse;
+    font-size:15px;
+    overflow:auto;
+  }
+  .table thead th{
+    text-align:left;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.9px;
+    color:var(--muted);
+    padding:10px 12px;
+    font-weight:600;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+    position:sticky;
+    top:0;
+    z-index:1;
+  }
+  .table tbody tr{
+    border-bottom: 1px dashed rgba(255,255,255,0.02);
+    transition: background 240ms ease;
+  }
+  .table td{
+    padding:12px;
+    vertical-align:middle;
+    color: #dce9f8;
+  }
+  .rank{
+    width:56px;
+    font-weight:700;
+    font-size:18px;
+    color:var(--accent);
+  }
+  .name{
+    font-weight:600;
+  }
+  .score{
+    font-weight:700;
+    font-size:16px;
+    text-align:right;
+    width:120px;
+  }
+
+  /* animations for updated cells */
+  .flash {
+    animation: flashBG 1s ease;
+  }
+  @keyframes flashBG{
+    0% { background: linear-gradient(90deg, rgba(255,255,80,0.06), rgba(255,255,255,0.01)); transform: translateY(-4px); }
+    100% { background: transparent; transform: none; }
+  }
+
+  /* small responsive */
+  @media (min-width:900px){
+    .board{ grid-template-columns: 1fr 380px; align-items:start; }
+  }
+
+  /* right panel */
+  .right-panel{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .stat{
+    padding:12px;
+    border-radius:10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+    border:1px solid rgba(255,255,255,0.02);
+  }
+  .stat h3{ margin:0; font-size:13px; color:var(--muted) }
+  .big{ font-size:28px; font-weight:800; color:var(--accent); margin-top:8px; }
+
+  /* leaves animation layer */
+  .leaves-layer{
+    pointer-events:none;
+    position:fixed;
+    inset:0;
+    z-index:2;
+    overflow:hidden;
+  }
+  .leaf{
+    position:absolute;
+    top:-10vh;
+    will-change: transform, opacity;
+    user-select:none;
+    transform-origin:center;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.45));
+    opacity:0.9;
+  }
+
+  /* footer */
+  footer{
+    margin-top:18px;
+    color:var(--muted);
+    font-size:13px;
+    text-align:center;
+    opacity:0.9;
+  }
+
+  /* small helpful hint box */
+  .hint{
+    font-size:13px;
+    color:var(--muted);
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+  .dot{ width:10px; height:10px; border-radius:50%; background:var(--accent); display:inline-block; box-shadow:0 4px 12px rgba(255,184,107,0.09); }
+</style>
 </head>
 <body>
-  <h1>Золота Осінь 2025</h1>
-  <div id="scoreboard">Завантаження...</div>
+  <div class="leaves-layer" id="leavesLayer" aria-hidden="true"></div>
 
-  <script>
-    // 🔗 Посилання на JSON Google Sheets (обов’язково має бути /gviz/tq?tqx=out:json)
-    const sheetURL =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/gviz/tq?tqx=out:json&gid=910619786";
+  <div class="wrap">
+    <header>
+      <div class="logo">ЗО</div>
+      <div>
+        <h1>Золота Осінь 2025 — Табло оцінок</h1>
+        <div class="sub">Гімнастичні змагання · Автопідвантаження кожні 5 секунд</div>
+      </div>
 
-    const scoreboard = document.getElementById("scoreboard");
+      <div class="meta">
+        <span class="time" id="lastUpdated">—</span>
+        <span class="muted">Таблиця з Google Sheets</span>
+      </div>
+    </header>
 
-    async function fetchData() {
-      try {
-        const res = await fetch(sheetURL);
-        const text = await res.text();
+    <div class="board">
+      <div class="card" id="mainCard" aria-live="polite">
+        <table class="table" id="scoresTable" role="table" aria-label="Оцінки гімнасток">
+          <thead>
+            <tr>
+              <th class="rank">#</th>
+              <th>Гімнастка</th>
+              <th>Команда</th>
+              <th class="score">Оцінка</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr><td colspan="4" style="padding:40px; text-align:center; color:var(--muted)">Завантаження даних...</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-        // Google додає префікс до JSON — прибираємо його
-        const json = JSON.parse(text.substr(47).slice(0, -2));
-
-        // Отримуємо всі рядки таблиці
-        const rows = json.table.rows;
-
-        // 7 рядок = індекс 6 (рахунок починається з 0)
-        const row = rows[6];
-        if (!row) throw new Error("Рядок 7 не знайдено");
-
-        // Витягуємо клітинки
-        const values = row.c.map(c => (c ? c.v : ""));
-
-        scoreboard.innerHTML = `
-          <div><strong>Ім’я:</strong> ${values[0]}</div>
-          <div><strong>Вправа:</strong> ${values[1]}</div>
-          <div><strong>Оцінка:</strong> ${values[2]}</div>
-          <div><strong>Суддя 1:</strong> ${values[3]}</div>
-          <div><strong>Суддя 2:</strong> ${values[4]}</div>
-          <div><strong>Суддя 3:</strong> ${values[5]}</div>
-        `;
-      } catch (err) {
-        scoreboard.innerHTML = `<div class="error">⚠️ Помилка завантаження даних</div>`;
-        console.error("Помилка:", err);
-      }
-    }
-
-    // Оновлення кожні 3 секунди
-    fetchData();
-    setInterval(fetchData, 3000);
-
-    // 🍁 Генеруємо падаючі листки
-    function createLeaf() {
-      const leaf = document.createElement("div");
-      leaf.classList.add("leaf");
-      leaf.innerHTML = "🍁";
-      leaf.style.left = Math.random() * 100 + "vw";
-      leaf.style.animationDuration = 5 + Math.random() * 5 + "s";
-      document.body.appendChild(leaf);
-      setTimeout(() => leaf.remove(), 10000);
-    }
-    setInterval(createLeaf, 400);
-  </script>
-</body>
-</html>
+      <div class="right-panel">
+        <div class="stat card">
+          <h3>Найвища оцінка</h3>
+          <div class="big" id="bestScore">—</div>
+        </div>
+        <div class="stat card">
+          <h3>Найнижча оцінка</h3>
+          <div class="big" id="worstScore">—</div>
+        </div>
+        <div class="card hint">
+          <span class="dot" aria-hidden="true"></span>
