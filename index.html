@@ -40,12 +40,12 @@ header {
   position: relative;
 }
 
-/* Гімнастка (анімація під час оновлення) */
+/* Гімнастка */
 .spinner {
   width: 120px;
   height: 120px;
   margin: 30px auto;
-  background-image: url('https://i.imgur.com/XavZj7E.png'); /* іконка гімнастки */
+  background-image: url('https://i.imgur.com/XavZj7E.png'); /* заміни на свою гімнастку */
   background-size: contain;
   background-repeat: no-repeat;
   animation: spinGymnast 2s linear infinite;
@@ -122,10 +122,10 @@ const RANGE = "Лист1!A7:G7";
 
 let oldRow = [];
 
-async function loadData() {
+async function loadData(forceFull = false) {
   const scoreboard = document.getElementById("scoreboard");
 
-  // показуємо гімнастку перед завантаженням
+  // показуємо гімнастку перед оновленням
   scoreboard.style.opacity = 0;
   scoreboard.innerHTML = `
     <div class="decor">👑</div>
@@ -153,12 +153,13 @@ async function loadData() {
       return;
     }
 
-    // затримка 1 секунда — щоб гімнастка встигла покрутитись
+    // чекаємо трохи, щоб гімнастка покрутилась
     await new Promise(r => setTimeout(r, 1000));
 
+    // якщо це перше оновлення або примусовий ререндер — показуємо все
     let html = `<div class="decor">👑</div>`;
     row.forEach((cell, index) => {
-      const changed = oldRow[index] !== undefined && oldRow[index] !== cell;
+      const changed = forceFull || oldRow[index] !== cell;
       html += `<div class="cell${changed ? ' scoreChanged' : ''}">${cell}</div>`;
     });
 
@@ -168,7 +169,8 @@ async function loadData() {
       scoreboard.style.opacity = 1;
     }, 250);
 
-    oldRow = row;
+    // зберігаємо дані тільки після успішного оновлення
+    oldRow = [...row];
   } catch (err) {
     showLoading("Не вдалося завантажити дані 😢<br>" + err.message);
   }
@@ -183,9 +185,10 @@ function showLoading(message) {
   `;
 }
 
+// початкове завантаження
 showLoading("Завантаження...");
-loadData();
-setInterval(loadData, 15000);
+loadData(true);
+setInterval(() => loadData(true), 15000);
 </script>
 </body>
 </html>
