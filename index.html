@@ -1,259 +1,79 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Оцінки на Екран</title>
-<style>
-  :root{
-    --bg:#060708;
-    --accent:#ffb86b;
-    --muted:#9aa4ad;
-    --score:#ff8a4b;
-  }
-  html,body{
-    height:100%;
-    margin:0;
-    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
-    color:#fff;
-    background:radial-gradient(800px 400px at 50% 40%, rgba(255,120,40,0.03), transparent 10%), var(--bg);
-    overflow:hidden;
-  }
-  .center{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    text-align:center;
-    padding:28px;
-    box-sizing:border-box;
-  }
-  h1{
-    margin:0;
-    font-size:32px;
-    color:var(--accent);
-    text-shadow:0 6px 30px rgba(0,0,0,0.6);
-  }
-  .sub{color:var(--muted);margin-top:8px;font-size:14px}
-  .name{
-    font-weight:700;
-    font-size:38px;
-    margin-top:40px;
-    opacity:0;
-    transform:translateY(10px);
-    transition:all .45s ease;
-  }
-  .team{
-    font-size:18px;
-    color:#d1dbe6;
-    margin-top:6px;
-    opacity:0;
-    transform:translateY(8px);
-    transition:all .45s ease;
-  }
-  .score{
-    font-size:96px;
-    line-height:1;
-    margin-top:18px;
-    color:var(--score);
-    text-shadow:0 10px 40px rgba(255,138,75,0.12);
-    opacity:0;
-    transform:scale(.95);
-    transition:all .6s cubic-bezier(.2,.8,.2,1);
-  }
-  .visible{opacity:1;transform:none}
-  footer{
-    position:absolute;
-    bottom:8px;
-    left:0;right:0;
-    text-align:center;
-    color:var(--muted);
-    font-size:13px;
-  }
-  .leaves{
-    position:fixed;inset:0;
-    pointer-events:none;
-    z-index:2;
-    overflow:hidden;
-  }
-  .leaf{
-    position:absolute;
-    top:-20vh;
-    font-size:28px;
-    will-change:transform,opacity;
-    opacity:0.95;
-    filter:drop-shadow(0 8px 20px rgba(0,0,0,0.6));
-  }
-  @media (max-width:600px){
-    .score{font-size:56px}
-    .name{font-size:28px}
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Оцінки спортсменів — Художня гімнастика</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #f9e3f0, #ffeefb);
+      color: #333;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    header {
+      background-color: #ffb6c1;
+      padding: 1.5em 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      color: white;
+      font-size: 2em;
+      letter-spacing: 1px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2em auto;
+      padding: 0 1em;
+    }
+
+    iframe {
+      width: 100%;
+      height: 700px;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    footer {
+      margin-top: 3em;
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    footer a {
+      color: #ff69b4;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-  <div class="leaves" id="leaves"></div>
+  <header>
+    <h1>Оцінки спортсменів з художньої гімнастики</h1>
+  </header>
 
-  <div class="center" role="main" aria-live="polite">
-    <h1>Золота Осінь 2025 🍁</h1>
-    <div class="sub">Свято краси</div>
-
-    <div id="display">
-      <div id="name" class="name">Завантаження...</div>
-      <div id="team" class="team"></div>
-      <div id="score" class="score">—</div>
-    </div>
+  <div class="container">
+    <p>Нижче представлено офіційні результати змагань:</p>
+    
+    <iframe 
+      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/pubhtml?widget=true&amp;headers=false">
+    </iframe>
   </div>
 
-  <footer id="status">Підключаюся...</footer>
-
-<script>
-// --- налаштування ---
-const SHEET_NAME = "екран"; // назва листа
-const GVIZ_JSON = `https://docs.google.com/spreadsheets/d/1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&tqx=out:json`;
-const PUB_HTML = `https://docs.google.com/spreadsheets/d/1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4/pubhtml?gid=910619786&single=true`;
-
-const REFRESH = 5000;        // оновлення кожні 5 секунд
-const ROW_TO_SHOW_INDEX = 6; // 7-й рядок (індекс починається з 0)
-const RANGE_START = 1;       // B = індекс 1
-const RANGE_END = 6;         // G = індекс 6
-
-const nameEl = document.getElementById("name");
-const teamEl = document.getElementById("team");
-const scoreEl = document.getElementById("score");
-const statusEl = document.getElementById("status");
-
-// ---------- отримання GViz ----------
-async function fetchGviz(){
-  try {
-    const r = await fetch(GVIZ_JSON, {cache: "no-store"});
-    if (!r.ok) throw new Error("gviz fetch failed: " + r.status);
-    const txt = await r.text();
-    const jsonText = txt.replace(/^[^{]*({[\s\S]*})\);?[\s\n]*$/,'$1');
-    return JSON.parse(jsonText);
-  } catch (e){
-    console.warn("gviz failed", e);
-    throw e;
-  }
-}
-
-// ---------- резерв: парсинг HTML ----------
-async function fetchPubHtmlAndParse(){
-  try {
-    const r = await fetch(PUB_HTML, {cache: "no-store"});
-    if (!r.ok) throw new Error("pubhtml fetch failed: " + r.status);
-    const html = await r.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-    const table = doc.querySelector("table");
-    if (!table) throw new Error("table not found in pubhtml");
-    const trs = Array.from(table.querySelectorAll("tr"));
-    const target = trs[ROW_TO_SHOW_INDEX];
-    if (!target) throw new Error("row not found in pubhtml: index " + ROW_TO_SHOW_INDEX);
-    const allCells = Array.from(target.querySelectorAll("td,th")).map(td => td.textContent.trim());
-    const cells = allCells.slice(RANGE_START, RANGE_END + 1); // B–G включно
-    return {fromPubHtml:true, cells};
-  } catch (e){
-    console.warn("pubhtml failed", e);
-    throw e;
-  }
-}
-
-// ---------- показ даних ----------
-function showDataFromCells(cells){
-  const name = cells[0] || "—";
-  const team = cells[1] || "";
-  const score = cells[cells.length - 1] || "—";
-
-  nameEl.textContent = name;
-  teamEl.textContent = team;
-  scoreEl.textContent = score;
-
-  setTimeout(()=> {
-    nameEl.classList.add("visible");
-    teamEl.classList.add("visible");
-    scoreEl.classList.add("visible");
-  }, 20);
-
-  statusEl.textContent = "Оновлено: " + new Date().toLocaleTimeString();
-}
-
-function showError(msg){
-  nameEl.textContent = "Помилка завантаження";
-  teamEl.textContent = "";
-  scoreEl.textContent = "—";
-  statusEl.textContent = msg;
-  console.error(msg);
-}
-
-// ---------- головне оновлення ----------
-async function updateOnce(){
-  nameEl.classList.remove("visible");
-  teamEl.classList.remove("visible");
-  scoreEl.classList.remove("visible");
-
-  try {
-    const g = await fetchGviz();
-    const rows = (g.table && g.table.rows) ? g.table.rows : [];
-    if (!rows.length) throw new Error("no rows in gviz");
-    if (rows.length <= ROW_TO_SHOW_INDEX) throw new Error("gviz: not enough rows ("+rows.length+")");
-
-    const rowObj = rows[ROW_TO_SHOW_INDEX];
-    const allCells = rowObj.c.map(c => (c && c.v !== undefined) ? String(c.v).trim() : "");
-    const cells = allCells.slice(RANGE_START, RANGE_END + 1); // B–G включно
-    showDataFromCells(cells);
-    return;
-  } catch (e1){
-    try {
-      const pub = await fetchPubHtmlAndParse();
-      if (pub && pub.cells) {
-        showDataFromCells(pub.cells);
-        return;
-      } else {
-        throw new Error("pubhtml parse returned nothing");
-      }
-    } catch (e2){
-      showError("Не вдається підвантажити дані. Перевір, чи таблиця публічна.");
-    }
-  }
-}
-
-// перший виклик + інтервал
-updateOnce();
-setInterval(updateOnce, REFRESH);
-
-// ---------- листочки 🍁 ----------
-const leafChars = ["🍁","🍂","🍃"];
-const leavesLayer = document.getElementById('leaves');
-
-function spawnLeaf(){
-  const el = document.createElement('div');
-  el.className = 'leaf';
-  const ch = leafChars[Math.floor(Math.random()*leafChars.length)];
-  el.textContent = ch;
-  const size = 18 + Math.random()*34;
-  el.style.fontSize = size + 'px';
-  el.style.left = (Math.random()*110 - 5) + 'vw';
-  const dur = 6000 + Math.random()*9000;
-  leavesLayer.appendChild(el);
-
-  const sway = (Math.random()*120 - 60);
-  el.animate([
-    { transform: `translateY(-10vh) rotate(0deg)`, opacity: 1 },
-    { transform: `translateY(110vh) translateX(${sway}px) rotate(${180+Math.random()*360}deg)`, opacity: 0.85 }
-  ], { duration: dur, easing: 'ease-in', fill: 'forwards' });
-
-  setTimeout(()=> el.remove(), dur+50);
-}
-
-setInterval(()=>{
-  const n = Math.random() < 0.7 ? 1 : (Math.random() < 0.3 ? 2 : 0);
-  for (let i=0;i<n;i++) spawnLeaf();
-}, 700);
-
-if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-  document.getElementById('leaves').style.display = 'none';
-}
-</script>
+  <footer>
+    <p>© 2025 Змагання з художньої гімнастики | 
+      <a href="https://github.com/твій_нікнейм">GitHub</a>
+    </p>
+  </footer>
 </body>
 </html>
