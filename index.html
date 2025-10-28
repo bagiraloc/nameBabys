@@ -16,6 +16,7 @@ body {
   align-items: center;
   height: 100vh;
   text-align: center;
+  overflow: hidden;
 }
 
 header {
@@ -36,6 +37,23 @@ header {
   backdrop-filter: blur(10px);
   min-width: 60%;
   transition: opacity 0.4s ease-in-out;
+  position: relative;
+}
+
+/* Гімнастка (анімація під час оновлення) */
+.spinner {
+  width: 120px;
+  height: 120px;
+  margin: 30px auto;
+  background-image: url('https://i.imgur.com/XavZj7E.png'); /* іконка гімнастки */
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: spinGymnast 2s linear infinite;
+}
+
+@keyframes spinGymnast {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .cell {
@@ -100,12 +118,20 @@ footer {
 <script>
 const SHEET_ID = "1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4";
 const API_KEY = "AIzaSyACg5f9j-PcZzeQiG8lyQC1NAnNw7gcIwE";
-const RANGE = "Лист1!A7:G7"; // рядок 7, колонки A–G
+const RANGE = "Лист1!A7:G7";
 
 let oldRow = [];
 
 async function loadData() {
   const scoreboard = document.getElementById("scoreboard");
+
+  // показуємо гімнастку перед завантаженням
+  scoreboard.style.opacity = 0;
+  scoreboard.innerHTML = `
+    <div class="decor">👑</div>
+    <div class="spinner"></div>
+    <div class="cell" style="color:#ffbfff;">Оновлення даних...</div>
+  `;
 
   try {
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
@@ -114,22 +140,52 @@ async function loadData() {
     const data = await res.json();
 
     if (!data.values || !data.values[0]) {
-      console.warn("Дані відсутні або порожні");
       showLoading("Немає даних у таблиці 😢");
       return;
     }
 
     let row = data.values[0];
-    // Гарантуємо, що завжди є 7 комірок
     row = Array.from({ length: 7 }, (_, i) => row[i] || "—");
 
-    // Якщо рядок виглядає підозріло коротким (менше 3 осмислених полів), не оновлюємо
     const filledCount = row.filter(v => v && v.trim() !== "—").length;
     if (filledCount < 3 && oldRow.length) {
       console.warn("Отримано неповні дані — оновлення пропущено");
       return;
     }
 
-    // Формуємо HTML після перевірки
+    // затримка 1 секунда — щоб гімнастка встигла покрутитись
+    await new Promise(r => setTimeout(r, 1000));
+
     let html = `<div class="decor">👑</div>`;
     row.forEach((cell, index) => {
+      const changed = oldRow[index] !== undefined && oldRow[index] !== cell;
+      html += `<div class="cell${changed ? ' scoreChanged' : ''}">${cell}</div>`;
+    });
+
+    scoreboard.style.opacity = 0;
+    setTimeout(() => {
+      scoreboard.innerHTML = html;
+      scoreboard.style.opacity = 1;
+    }, 250);
+
+    oldRow = row;
+  } catch (err) {
+    showLoading("Не вдалося завантажити дані 😢<br>" + err.message);
+  }
+}
+
+function showLoading(message) {
+  const scoreboard = document.getElementById("scoreboard");
+  scoreboard.innerHTML = `
+    <div class="decor">👑</div>
+    <div class="spinner"></div>
+    <div class="cell" style="color:#ffbfff;">${message}</div>
+  `;
+}
+
+showLoading("Завантаження...");
+loadData();
+setInterval(loadData, 15000);
+</script>
+</body>
+</html>
