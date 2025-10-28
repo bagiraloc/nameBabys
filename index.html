@@ -37,4 +37,135 @@
       box-shadow: 0 0 30px rgba(160, 80, 255, 0.3);
       backdrop-filter: blur(10px);
       min-width: 60%;
-      animation: fad
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    .name {
+      font-size: 2.2em;
+      color: #c499ff;
+      font-weight: 600;
+      margin-bottom: 10px;
+      opacity: 0;
+      animation: slideIn 1.2s ease-out forwards;
+    }
+
+    .club, .year, .category, .score {
+      font-size: 1.4em;
+      color: #e3cfff;
+      opacity: 0;
+      animation: fadeUp 1s ease-in-out forwards;
+    }
+
+    .club { animation-delay: 0.6s; }
+    .year { animation-delay: 1.2s; }
+    .category { animation-delay: 1.8s; }
+    .score {
+      animation-delay: 2.4s;
+      color: #bb8fff;
+      font-size: 2.5em;
+      font-weight: bold;
+      text-shadow: 0 0 10px #c499ff;
+    }
+
+    @keyframes slideIn {
+      0% { transform: translateY(50px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes fadeUp {
+      0% { transform: translateY(20px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    footer {
+      margin-top: 40px;
+      color: #bdaaff;
+      font-size: 0.9em;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    .name::after {
+      content: "";
+      display: block;
+      width: 0%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #bb8fff, transparent);
+      margin: 10px auto;
+      animation: glowLine 2s ease-in-out forwards;
+    }
+
+    @keyframes glowLine {
+      from { width: 0%; opacity: 0; }
+      to { width: 80%; opacity: 1; }
+    }
+
+    .error {
+      color: #ff8ba7;
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>Офіційні результати змагань з художньої гімнастики</header>
+
+  <div class="scoreboard" id="scoreboard">
+    <div class="name">Завантаження...</div>
+  </div>
+
+  <footer>© 2025 Федерація художньої гімнастики</footer>
+
+  <script>
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/pub?gid=910619786&single=true&output=csv";
+
+    async function loadData() {
+      const scoreboard = document.getElementById("scoreboard");
+      try {
+        const response = await fetch(csvUrl);
+        const text = await response.text();
+
+        // Парсинг CSV (враховує лапки та коми)
+        const rows = text.trim().split(/\r?\n/).map(line => {
+          const result = [];
+          let cell = "", insideQuotes = false;
+          for (let ch of line) {
+            if (ch === '"') insideQuotes = !insideQuotes;
+            else if (ch === "," && !insideQuotes) {
+              result.push(cell.trim().replace(/^"|"$/g, ""));
+              cell = "";
+            } else cell += ch;
+          }
+          result.push(cell.trim().replace(/^"|"$/g, ""));
+          return result;
+        });
+
+        // знайти перший рядок, де є хоч якісь дані
+        const dataRow = rows.find(r => r.some(cell => cell.trim() !== ""));
+        if (!dataRow) throw new Error("Дані не знайдено.");
+
+        // спробуємо прочитати колонки послідовно
+        const [place, name, club, year, category, score] = dataRow;
+
+        // вивід даних
+        scoreboard.innerHTML = `
+          <div class="name">${name || "—"}</div>
+          <div class="club">${club || ""}</div>
+          <div class="year">${year || ""}</div>
+          <div class="category">${category || ""}</div>
+          <div class="score">${score || ""}</div>
+        `;
+      } catch (err) {
+        scoreboard.innerHTML = `<div class="error">Не вдалося завантажити дані 😢<br>${err.message}</div>`;
+        console.error(err);
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
