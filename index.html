@@ -1,141 +1,154 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Оцінки спортсменів — Художня гімнастика</title>
   <style>
-    /* 💫 Основний стиль */
     body {
-      font-family: "Poppins", sans-serif;
-      background: radial-gradient(circle at top, #ffeef9 0%, #f7d8eb 40%, #fcecf8 100%);
-      color: #333;
       margin: 0;
-      padding: 0;
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at top, #1a082b 0%, #0c0215 100%);
+      color: #e3cfff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
       text-align: center;
-      overflow-x: hidden;
     }
 
     header {
-      background: linear-gradient(90deg, #ffb6c1, #ff9bc4, #ffb6c1);
-      padding: 1.5em 0;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      position: relative;
-    }
-
-    header::after {
-      content: "★";
-      position: absolute;
-      right: 30px;
-      top: 20px;
       color: #fff;
       font-size: 2em;
-      opacity: 0.5;
-    }
-
-    header h1 {
-      margin: 0;
-      color: white;
-      font-size: 2.2em;
-      letter-spacing: 1px;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 2em auto;
-      padding: 1em;
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      backdrop-filter: blur(8px);
-    }
-
-    h2 {
-      color: #c94d94;
-      margin-top: 0;
       font-weight: 600;
-      font-size: 1.4em;
+      margin-bottom: 40px;
+      text-shadow: 0 0 15px #c299ff;
+      letter-spacing: 1px;
+      animation: fadeIn 1.5s ease-in-out;
     }
 
     .scoreboard {
-      border: 3px solid #ffb6c1;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(255, 192, 203, 0.6);
-      background: white;
-      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(200, 150, 255, 0.4);
+      border-radius: 15px;
+      padding: 30px 50px;
+      box-shadow: 0 0 30px rgba(160, 80, 255, 0.3);
+      backdrop-filter: blur(10px);
+      min-width: 60%;
+      animation: fadeIn 2s ease-in-out;
     }
 
-    iframe {
-      width: 100%;
-      height: 700px;
-      border: none;
+    .name {
+      font-size: 2.2em;
+      color: #c499ff;
+      font-weight: 600;
+      margin-bottom: 10px;
+      opacity: 0;
+      animation: slideIn 1.2s ease-out forwards;
     }
 
-    /* 🌟 Декоративні "блиски" */
-    .sparkle {
-      position: fixed;
-      width: 6px;
-      height: 6px;
-      background: radial-gradient(circle, #fff 0%, transparent 60%);
-      border-radius: 50%;
-      animation: sparkle 6s infinite ease-in-out;
-      opacity: 0.6;
+    .club, .year, .category, .score {
+      font-size: 1.4em;
+      color: #e3cfff;
+      opacity: 0;
+      animation: fadeUp 1s ease-in-out forwards;
     }
 
-    @keyframes sparkle {
-      0% { transform: translateY(0) scale(1); opacity: 0.6; }
-      50% { transform: translateY(-20px) scale(1.3); opacity: 1; }
-      100% { transform: translateY(0) scale(1); opacity: 0.6; }
+    .club { animation-delay: 0.6s; }
+    .year { animation-delay: 1.2s; }
+    .category { animation-delay: 1.8s; }
+    .score {
+      animation-delay: 2.4s;
+      color: #bb8fff;
+      font-size: 2.5em;
+      font-weight: bold;
+      text-shadow: 0 0 10px #c499ff;
+    }
+
+    @keyframes slideIn {
+      0% { transform: translateY(50px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes fadeUp {
+      0% { transform: translateY(20px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     footer {
-      margin-top: 3em;
+      margin-top: 40px;
+      color: #bdaaff;
       font-size: 0.9em;
-      color: #777;
+      animation: fadeIn 2s ease-in-out;
     }
 
-    footer a {
-      color: #ff69b4;
-      text-decoration: none;
-      font-weight: 500;
+    /* Ефект сяйва навколо імені */
+    .name::after {
+      content: "";
+      display: block;
+      width: 0%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #bb8fff, transparent);
+      margin: 10px auto;
+      animation: glowLine 2s ease-in-out forwards;
     }
 
-    footer a:hover {
-      text-decoration: underline;
+    @keyframes glowLine {
+      from { width: 0%; opacity: 0; }
+      to { width: 80%; opacity: 1; }
     }
   </style>
 </head>
 <body>
+  <header>Офіційні результати змагань з художньої гімнастики</header>
 
-  <header>
-    <h1>Офіційні результати змагань з художньої гімнастики</h1>
-  </header>
-
-  <div class="container">
-    <h2>Актуальні оцінки спортсменів</h2>
-    <div class="scoreboard">
-      <!-- 💎 Живий вигляд Google Sheets -->
-      <iframe 
-        src="https://docs.google.com/spreadsheets/d/1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4/edit?usp=sharing&rm=minimal"
-        allowfullscreen>
-      </iframe>
-    </div>
+  <div class="scoreboard" id="scoreboard">
+    <div class="name">Завантаження...</div>
   </div>
 
-  <footer>
-    <p>© 2025 Федерація художньої гімнастики | 
-      <a href="https://github.com/твій_нікнейм" target="_blank">GitHub</a>
-    </p>
-  </footer>
+  <footer>© 2025 Федерація художньої гімнастики</footer>
 
-  <!-- ✨ Трохи блиску -->
-  <div class="sparkle" style="left:10%; top:70%; animation-delay:0s;"></div>
-  <div class="sparkle" style="left:30%; top:40%; animation-delay:2s;"></div>
-  <div class="sparkle" style="left:60%; top:80%; animation-delay:1s;"></div>
-  <div class="sparkle" style="left:80%; top:20%; animation-delay:3s;"></div>
-  <div class="sparkle" style="left:50%; top:10%; animation-delay:4s;"></div>
+  <script>
+    // 🔗 Посилання на опублікований CSV (твоя таблиця)
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/pub?gid=910619786&single=true&output=csv";
 
+    async function loadData() {
+      try {
+        const response = await fetch(csvUrl);
+        const text = await response.text();
+
+        // Розділити CSV на рядки і комірки
+        const rows = text.trim().split("\n").map(r => r.split(","));
+        const row = rows[6]; // 7-й рядок (нумерація з 0)
+
+        if (!row || row.length < 5) throw new Error("Недостатньо даних у рядку.");
+
+        const [place, name, club, year, category, score] = row;
+
+        const html = `
+          <div class="name">${name || "—"}</div>
+          <div class="club">Клуб: ${club || "—"}</div>
+          <div class="year">Рік народження: ${year || "—"}</div>
+          <div class="category">Категорія: ${category || "—"}</div>
+          <div class="score">Оцінка: ${score || "—"}</div>
+        `;
+
+        document.getElementById("scoreboard").innerHTML = html;
+      } catch (err) {
+        document.getElementById("scoreboard").innerHTML =
+          "<div class='name'>Не вдалося завантажити дані 😢</div>";
+        console.error(err);
+      }
+    }
+
+    loadData();
+  </script>
 </body>
 </html>
