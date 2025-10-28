@@ -65,6 +65,7 @@
       font-size: 2.5em;
       font-weight: bold;
       text-shadow: 0 0 10px #c499ff;
+      animation: bounce 2s ease-in-out infinite alternate;
     }
 
     @keyframes slideIn {
@@ -80,6 +81,11 @@
     @keyframes fadeIn {
       from { opacity: 0; transform: scale(0.95); }
       to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes bounce {
+      from { transform: scale(1); text-shadow: 0 0 10px #c499ff; }
+      to { transform: scale(1.05); text-shadow: 0 0 25px #e2c1ff; }
     }
 
     footer {
@@ -121,15 +127,17 @@
   <footer>© 2025 Федерація художньої гімнастики</footer>
 
   <script>
-    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/pub?gid=910619786&single=true&output=csv";
+    const baseUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSiLPa8xQDMN2XwhllLfVcFo_fjbLYVU0nQ6iSVTaAJezovC8OYgSgTOqiz-muYLNnYAtgJhqpZwhPK/pub?gid=910619786&single=true&output=csv";
 
     async function loadData() {
       const scoreboard = document.getElementById("scoreboard");
       try {
-        const response = await fetch(csvUrl);
+        // додаємо час, щоб обійти кеш браузера
+        const url = `${baseUrl}&t=${Date.now()}`;
+        const response = await fetch(url, { cache: "no-store" });
         const text = await response.text();
 
-        // Парсинг CSV (враховує лапки та коми)
+        // розбір CSV
         const rows = text.trim().split(/\r?\n/).map(line => {
           const result = [];
           let cell = "", insideQuotes = false;
@@ -144,14 +152,11 @@
           return result;
         });
 
-        // знайти перший рядок, де є хоч якісь дані
         const dataRow = rows.find(r => r.some(cell => cell.trim() !== ""));
         if (!dataRow) throw new Error("Дані не знайдено.");
 
-        // спробуємо прочитати колонки послідовно
         const [place, name, club, year, category, score] = dataRow;
 
-        // вивід даних
         scoreboard.innerHTML = `
           <div class="name">${name || "—"}</div>
           <div class="club">${club || ""}</div>
@@ -166,6 +171,9 @@
     }
 
     loadData();
+
+    // 🔄 Автооновлення кожні 5 секунд
+    setInterval(loadData, 15000);
   </script>
 </body>
 </html>
