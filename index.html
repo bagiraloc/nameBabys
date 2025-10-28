@@ -15,7 +15,6 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  overflow: hidden;
   text-align: center;
 }
 
@@ -25,7 +24,6 @@ header {
   font-weight: 600;
   margin-bottom: 40px;
   text-shadow: 0 0 15px #c299ff;
-  letter-spacing: 1px;
   animation: fadeIn 1.5s ease-in-out;
 }
 
@@ -37,6 +35,7 @@ header {
   box-shadow: 0 0 30px rgba(160, 80, 255, 0.3);
   backdrop-filter: blur(10px);
   min-width: 60%;
+  transition: opacity 0.4s ease-in-out;
 }
 
 .cell {
@@ -45,7 +44,7 @@ header {
   margin: 10px 0;
   font-weight: 600;
   opacity: 0;
-  animation: fadeUp 1s ease-in-out forwards;
+  animation: fadeUp 0.8s ease-in-out forwards;
 }
 
 .decor {
@@ -79,10 +78,7 @@ footer {
 
 .error { color: #ff8ba7; font-size: 1.2em; margin-top: 20px; }
 
-/* Анімація зміни оцінки */
-.scoreChanged {
-  animation: pulse 1s ease-in-out;
-}
+.scoreChanged { animation: pulse 1s ease-in-out; }
 
 @keyframes pulse {
   0% { transform: scale(1); color: #bb8fff; text-shadow: 0 0 5px #bb8fff; }
@@ -104,7 +100,7 @@ footer {
 <script>
 const SHEET_ID = "1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4";
 const API_KEY = "AIzaSyACg5f9j-PcZzeQiG8lyQC1NAnNw7gcIwE";
-const RANGE = "Лист1!A7:G7"; // 7-й рядок, колонки A–G
+const RANGE = "Лист1!A7:G7"; // рядок 7, колонки A–G
 
 let oldRow = [];
 
@@ -114,41 +110,26 @@ async function loadData() {
   try {
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
     const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
-    if (!data.values || !data.values[0]) throw new Error("Дані не знайдено");
+    if (!data.values || !data.values[0]) {
+      console.warn("Дані відсутні або порожні");
+      showLoading("Немає даних у таблиці 😢");
+      return;
+    }
 
-    const row = data.values[0];
+    let row = data.values[0];
+    // Гарантуємо, що завжди є 7 комірок
+    row = Array.from({ length: 7 }, (_, i) => row[i] || "—");
 
-    // гарантуємо, що завжди 7 колонок
-    const fullRow = Array.from({ length: 7 }, (_, i) => row[i] || "—");
+    // Якщо рядок виглядає підозріло коротким (менше 3 осмислених полів), не оновлюємо
+    const filledCount = row.filter(v => v && v.trim() !== "—").length;
+    if (filledCount < 3 && oldRow.length) {
+      console.warn("Отримано неповні дані — оновлення пропущено");
+      return;
+    }
 
-    scoreboard.innerHTML = `<div class="decor">👑</div>`; // верхня “корона”
-
-    fullRow.forEach((cell, index) => {
-      const div = document.createElement("div");
-      div.className = "cell";
-      div.textContent = cell;
-
-      // якщо значення змінилося — анімація
-      if (oldRow[index] !== undefined && oldRow[index] !== cell) {
-        div.classList.add("scoreChanged");
-      }
-
-      scoreboard.appendChild(div);
-    });
-
-    oldRow = fullRow;
-
-  } catch (err) {
-    scoreboard.innerHTML = `<div class="decor">👑</div><div class="error">Не вдалося завантажити дані 😢<br>${err.message}</div>`;
-    console.error(err);
-  }
-}
-
-// оновлення кожні 3 секунд
-loadData();
-setInterval(loadData, 15000);
-</script>
-</body>
-</html>
+    // Формуємо HTML після перевірки
+    let html = `<div class="decor">👑</div>`;
+    row.forEach((cell, index) => {
