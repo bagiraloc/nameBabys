@@ -48,6 +48,13 @@ header {
   animation: fadeUp 1s ease-in-out forwards;
 }
 
+.decor {
+  font-size: 2.2em;
+  color: #ffd700;
+  margin-bottom: 15px;
+  animation: pulseStar 2s infinite ease-in-out;
+}
+
 footer {
   margin-top: 40px;
   color: #bdaaff;
@@ -63,6 +70,11 @@ footer {
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulseStar {
+  0%, 100% { transform: scale(1); text-shadow: 0 0 10px #ffd700; }
+  50% { transform: scale(1.2); text-shadow: 0 0 25px #ffea8a; }
 }
 
 .error { color: #ff8ba7; font-size: 1.2em; margin-top: 20px; }
@@ -83,6 +95,7 @@ footer {
 <header>Офіційні результати змагань з художньої гімнастики</header>
 
 <div class="scoreboard" id="scoreboard">
+  <div class="decor">👑</div>
   <div class="cell">Завантаження...</div>
 </div>
 
@@ -91,12 +104,13 @@ footer {
 <script>
 const SHEET_ID = "1gBNHtvbDQ5welQn09qDcLFtVPMNwGL3OSI8zeC1pZN4";
 const API_KEY = "AIzaSyACg5f9j-PcZzeQiG8lyQC1NAnNw7gcIwE";
-const RANGE = "Лист1!A7:G7"; // 7-й рядок, колонки A-G
+const RANGE = "Лист1!A7:G7"; // 7-й рядок, колонки A–G
 
 let oldRow = [];
 
 async function loadData() {
   const scoreboard = document.getElementById("scoreboard");
+
   try {
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
     const res = await fetch(url);
@@ -106,13 +120,17 @@ async function loadData() {
 
     const row = data.values[0];
 
-    scoreboard.innerHTML = "";
-    row.forEach((cell, index) => {
+    // гарантуємо, що завжди 7 колонок
+    const fullRow = Array.from({ length: 7 }, (_, i) => row[i] || "—");
+
+    scoreboard.innerHTML = `<div class="decor">👑</div>`; // верхня “корона”
+
+    fullRow.forEach((cell, index) => {
       const div = document.createElement("div");
       div.className = "cell";
-      div.textContent = cell || "—";
+      div.textContent = cell;
 
-      // якщо значення змінилось, додаємо анімацію
+      // якщо значення змінилося — анімація
       if (oldRow[index] !== undefined && oldRow[index] !== cell) {
         div.classList.add("scoreChanged");
       }
@@ -120,15 +138,15 @@ async function loadData() {
       scoreboard.appendChild(div);
     });
 
-    oldRow = row; // зберігаємо для порівняння при наступному оновленні
+    oldRow = fullRow;
 
   } catch (err) {
-    scoreboard.innerHTML = `<div class="error">Не вдалося завантажити дані 😢<br>${err.message}</div>`;
+    scoreboard.innerHTML = `<div class="decor">👑</div><div class="error">Не вдалося завантажити дані 😢<br>${err.message}</div>`;
     console.error(err);
   }
 }
 
-// Завантаження одразу і оновлення кожні 3 секунд
+// оновлення кожні 15 секунд
 loadData();
 setInterval(loadData, 15000);
 </script>
