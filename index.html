@@ -134,10 +134,10 @@
 
         const html = `
           <div class="name">${name || "—"}</div>
-          <div class="club">Клуб: ${club || "—"}</div>
-          <div class="year">Рік народження: ${year || "—"}</div>
-          <div class="category">Категорія: ${category || "—"}</div>
-          <div class="score">Оцінка: ${score || "—"}</div>
+          <div class="club"> ${club || "—"}</div>
+          <div class="year"> ${year || "—"}</div>
+          <div class="category"> ${category || "—"}</div>
+          <div class="score">${score || "—"}</div>
         `;
 
         document.getElementById("scoreboard").innerHTML = html;
