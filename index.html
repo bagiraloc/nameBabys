@@ -40,38 +40,21 @@
       animation: fadeIn 2s ease-in-out;
     }
 
-    .name {
-      font-size: 2.2em;
-      color: #c499ff;
+    .cell {
+      font-size: 1.6em;
+      color: #bb8fff;
+      margin: 10px 0;
       font-weight: 600;
-      margin-bottom: 10px;
-      opacity: 0;
-      animation: slideIn 1.2s ease-out forwards;
-    }
-
-    .club, .year, .category, .score {
-      font-size: 1.4em;
-      color: #e3cfff;
       opacity: 0;
       animation: fadeUp 1s ease-in-out forwards;
     }
 
-    .club { animation-delay: 0.6s; }
-    .year { animation-delay: 1.2s; }
-    .category { animation-delay: 1.8s; }
-    .score {
-      animation-delay: 2.4s;
-      color: #bb8fff;
-      font-size: 2.5em;
-      font-weight: bold;
-      text-shadow: 0 0 10px #c499ff;
-      animation: bounce 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes slideIn {
-      0% { transform: translateY(50px); opacity: 0; }
-      100% { transform: translateY(0); opacity: 1; }
-    }
+    .cell:nth-child(1) { animation-delay: 0.2s; }
+    .cell:nth-child(2) { animation-delay: 0.4s; }
+    .cell:nth-child(3) { animation-delay: 0.6s; }
+    .cell:nth-child(4) { animation-delay: 0.8s; }
+    .cell:nth-child(5) { animation-delay: 1s; }
+    .cell:nth-child(6) { animation-delay: 1.2s; }
 
     @keyframes fadeUp {
       0% { transform: translateY(20px); opacity: 0; }
@@ -83,31 +66,11 @@
       to { opacity: 1; transform: scale(1); }
     }
 
-    @keyframes bounce {
-      from { transform: scale(1); text-shadow: 0 0 10px #c499ff; }
-      to { transform: scale(1.05); text-shadow: 0 0 25px #e2c1ff; }
-    }
-
     footer {
       margin-top: 40px;
       color: #bdaaff;
       font-size: 0.9em;
       animation: fadeIn 2s ease-in-out;
-    }
-
-    .name::after {
-      content: "";
-      display: block;
-      width: 0%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #bb8fff, transparent);
-      margin: 10px auto;
-      animation: glowLine 2s ease-in-out forwards;
-    }
-
-    @keyframes glowLine {
-      from { width: 0%; opacity: 0; }
-      to { width: 80%; opacity: 1; }
     }
 
     .error {
@@ -121,7 +84,7 @@
   <header>Офіційні результати змагань з художньої гімнастики</header>
 
   <div class="scoreboard" id="scoreboard">
-    <div class="name">Завантаження...</div>
+    <div class="cell">Завантаження...</div>
   </div>
 
   <footer>© 2025 Федерація художньої гімнастики</footer>
@@ -132,12 +95,11 @@
     async function loadData() {
       const scoreboard = document.getElementById("scoreboard");
       try {
-        // додаємо час, щоб обійти кеш браузера
-        const url = `${baseUrl}&t=${Date.now()}`;
+        const url = `${baseUrl}&t=${Date.now()}`; // обхід кешу
         const response = await fetch(url, { cache: "no-store" });
         const text = await response.text();
 
-        // розбір CSV
+        // Розбір CSV з урахуванням лапок
         const rows = text.trim().split(/\r?\n/).map(line => {
           const result = [];
           let cell = "", insideQuotes = false;
@@ -152,18 +114,18 @@
           return result;
         });
 
-        const dataRow = rows.find(r => r.some(cell => cell.trim() !== ""));
-        if (!dataRow) throw new Error("Дані не знайдено.");
+        const row = rows[6]; // 7-й рядок (нумерація з 0)
+        if (!row) throw new Error("Рядок не знайдено");
 
-        const [place, name, club, year, category, score] = dataRow;
+        // Створюємо HTML для всіх колонок
+        scoreboard.innerHTML = "";
+        row.forEach(cellValue => {
+          const div = document.createElement("div");
+          div.className = "cell";
+          div.textContent = cellValue || "—";
+          scoreboard.appendChild(div);
+        });
 
-        scoreboard.innerHTML = `
-          <div class="name">${name || "—"}</div>
-          <div class="club">${club || ""}</div>
-          <div class="year">${year || ""}</div>
-          <div class="category">${category || ""}</div>
-          <div class="score">${score || ""}</div>
-        `;
       } catch (err) {
         scoreboard.innerHTML = `<div class="error">Не вдалося завантажити дані 😢<br>${err.message}</div>`;
         console.error(err);
@@ -171,9 +133,7 @@
     }
 
     loadData();
-
-    // 🔄 Автооновлення кожні 5 секунд
-    setInterval(loadData, 15000);
+    setInterval(loadData, 15000); // оновлюємо кожні 15 секунд
   </script>
 </body>
 </html>
