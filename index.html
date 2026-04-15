@@ -57,7 +57,6 @@ header {
   justify-content: center; 
   transition: filter 0.5s ease-in-out;
   margin-top: -140px; 
-  /* Додано невеликий відступ знизу, щоб футер не зливався з рамкою */
   margin-bottom: 10px; 
 }
 
@@ -90,7 +89,6 @@ header {
 }
 
 footer {
-  /* ФУТЕР ТЕПЕР ПІД РАМКОЮ */
   color: #bdaaff;
   font-size: 1.2em; 
   font-weight: 600;
@@ -141,7 +139,8 @@ footer {
 <footer>© 2026 EstEvents by Емма Щелецька</footer>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycby8bIfxUFNLKBZZ9OQn9r-Dqt7jsaJULJJ-yNHhIT8U7AFGkWf8aiNrbG7cVbxEw6Oc0w/exec";
+// Ваша нова посилка на скрипт
+const API_URL = "https://script.google.com/macros/s/AKfycbyhuV7wnJIyk0oSdbLR1_np0DS47acXlRAnwTEV7MczrJlfn9GZvOMRTNYkjYciKdFu/exec";
 let lastData = "";
 
 async function loadData() {
@@ -155,11 +154,12 @@ async function loadData() {
     const data = await res.json();
     if (!Array.isArray(data)) return;
 
-    // ЗМІНЕНО ТІЛЬКИ ЦЕЙ БЛОК: ФОРМАТУВАННЯ ОЦІНКИ (ІНДЕКС 5 = СТОВПЕЦЬ G)
-    const fixedRow = data.slice(1, 7).map((v, index) => {
+    // Обробляємо отримані дані (B3:C3 — це 2 елементи масиву)
+    const fixedRow = data.map((v, index) => {
       if (v === undefined || String(v).trim() === "") return "—";
       
-      if (index === 5) {
+      // Якщо друга клітинка (C3) — це оцінка, робимо 3 знаки після коми
+      if (index === 1) { 
         let num = parseFloat(String(v).replace(',', '.'));
         if (!isNaN(num)) return num.toFixed(3);
       }
