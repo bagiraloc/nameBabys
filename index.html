@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sportart Rhythmic — LIVE</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: radial-gradient(circle at top, #1a082b 0%, #0c0215 100%);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; 
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  overflow: hidden;
+}
+
+header {
+  flex-shrink: 0;
+  margin-top: -70px; 
+  margin-bottom: 2px; 
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+.header-logo {
+  width: 520px; 
+  height: auto;
+  filter: drop-shadow(0 0 20px rgba(194, 153, 255, 0.4));
+}
+
+.logo-estevents {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 130px;
+  height: auto;
+  z-index: 1000;
+  opacity: 0.8;
+}
+
+.scoreboard {
+  background: rgba(255, 255, 255, 0.05);
+  border: 4px solid rgba(200, 150, 255, 0.5); 
+  border-radius: 30px;
+  padding: 30px 60px; 
+  box-shadow: 0 0 50px rgba(160, 80, 255, 0.2);
+  backdrop-filter: blur(15px);
+  min-width: 85%; 
+  max-height: 75vh; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  transition: filter 0.5s ease-in-out;
+  margin-top: -140px; 
+  /* Додано невеликий відступ знизу, щоб футер не зливався з рамкою */
+  margin-bottom: 10px; 
+}
+
+.cell-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; 
+}
+
+.cell {
+  font-size: 4.2em; 
+  color: #ffffff;
+  font-weight: 900; 
+  line-height: 1.1;
+  text-shadow: 3px 3px 15px rgba(0, 0, 0, 0.5);
+  animation: fadeUp 0.6s ease-out forwards;
+}
+
+.cell:first-child {
+  color: #ffffff;
+  font-size: 5em;
+  margin-bottom: 5px;
+}
+
+.decor {
+  font-size: 4em;
+  color: #ffffff;
+  margin-bottom: 5px;
+  animation: pulseStar 2s infinite ease-in-out;
+}
+
+footer {
+  /* ФУТЕР ТЕПЕР ПІД РАМКОЮ */
+  color: #bdaaff;
+  font-size: 1.2em; 
+  font-weight: 600;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+@keyframes fadeUp {
+  0% { transform: translateY(15px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseStar {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@media (max-width: 768px) {
+  .header-logo { width: 220px; }
+  .cell { font-size: 1.4em; }
+  .cell:first-child { font-size: 1.7em; }
+  .scoreboard { padding: 15px 25px; min-width: 92%; margin-top: 0; }
+  .header { margin-top: 5px; }
+  .decor { font-size: 1.8em; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="logo_sportart.png.jpg" alt="Sport Art Cup" class="header-logo">
+</header>
+
+<img src="logo_estevents.png.png" alt="EstEvents Logo" class="logo-estevents">
+
+<div class="scoreboard" id="scoreboard">
+  <div class="decor">👑</div>
+  <div id="content" class="cell-container">
+    <div class="cell">ОЧІКУВАННЯ...</div>
+  </div>
+</div>
+
+<footer>© 2026 EstEvents by Емма Щелецька</footer>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycby8bIfxUFNLKBZZ9OQn9r-Dqt7jsaJULJJ-yNHhIT8U7AFGkWf8aiNrbG7cVbxEw6Oc0w/exec";
+let lastData = "";
+
+async function loadData() {
+  const scoreboard = document.getElementById("scoreboard");
+  const content = document.getElementById("content");
+
+  try {
+    const res = await fetch(API_URL + "?t=" + Date.now());
+    if (!res.ok) return;
+
+    const data = await res.json();
+    if (!Array.isArray(data)) return;
+
+    // ЗМІНЕНО ТІЛЬКИ ЦЕЙ БЛОК: ФОРМАТУВАННЯ ОЦІНКИ (ІНДЕКС 5 = СТОВПЕЦЬ G)
+    const fixedRow = data.slice(1, 7).map((v, index) => {
+      if (v === undefined || String(v).trim() === "") return "—";
+      
+      if (index === 5) {
+        let num = parseFloat(String(v).replace(',', '.'));
+        if (!isNaN(num)) return num.toFixed(3);
+      }
+      
+      return String(v).trim();
+    });
+
+    const newData = JSON.stringify(fixedRow);
+    if (newData === lastData) return;
+    lastData = newData;
+
+    scoreboard.style.filter = "blur(8px)";
+
+    setTimeout(() => {
+      content.innerHTML = fixedRow.map((v, i) => 
+        `<div class="cell" style="animation-delay: ${i * 0.05}s">${v}</div>`
+      ).join('');
+      scoreboard.style.filter = "blur(0)";
+    }, 300);
+
+  } catch (e) { console.error("Error", e); }
+}
+
+loadData();
+setInterval(loadData, 2500);
+</script>
+
+</body>
+</html>
