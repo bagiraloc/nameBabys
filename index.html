@@ -13,7 +13,7 @@ body {
   color: #ffffff;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Центруємо вертикально */
+  justify-content: center; 
   align-items: center;
   height: 100vh;
   text-align: center;
@@ -21,13 +21,13 @@ body {
 }
 
 header {
-  position: absolute; /* Логотип зверху */
-  top: 20px;
+  position: absolute;
+  top: 40px;
   animation: fadeIn 1.5s ease-in-out;
 }
 
 .header-logo {
-  width: 400px; 
+  width: 450px; 
   height: auto;
   filter: drop-shadow(0 0 15px rgba(194, 153, 255, 0.4));
 }
@@ -46,10 +46,10 @@ header {
   background: rgba(255, 255, 255, 0.05);
   border: 4px solid rgba(200, 150, 255, 0.5); 
   border-radius: 40px;
-  padding: 50px 80px; 
+  padding: 60px 40px; 
   box-shadow: 0 0 60px rgba(160, 80, 255, 0.2);
   backdrop-filter: blur(15px);
-  min-width: 80%; 
+  min-width: 85%; 
   display: flex;
   flex-direction: column;
   justify-content: center; 
@@ -59,30 +59,28 @@ header {
 .cell-container {
   display: flex;
   flex-direction: column;
-  gap: 20px; 
+  gap: 30px; /* Відступ між іменем та клубом */
 }
 
 .cell {
   color: #ffffff;
-  font-weight: 900; 
-  line-height: 1.1;
-  text-shadow: 3px 3px 15px rgba(0, 0, 0, 0.5);
+  font-weight: 900; /* Максимальна жирність */
+  line-height: 1.2;
+  text-shadow: 4px 4px 20px rgba(0, 0, 0, 0.6);
   animation: fadeUp 0.6s ease-out forwards;
 }
 
-/* Стиль для Імені (B3) */
-.cell:first-child {
-  font-size: 6.5em; /* Дуже велике ім'я */
-  color: #ffffff;
+/* Стиль для ІМЕНІ (Перший рядок) */
+.name-row {
+  font-size: 7em; /* Дуже великий шрифт */
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
 }
 
-/* Стиль для Клубу/Команди (C3) */
-.cell:last-child {
-  font-size: 4em; /* Трохи менше за ім'я */
-  color: #f6c453; /* Золотистий колір для контрасту */
-  opacity: 0.9;
+/* Стиль для КЛУБУ (Другий рядок) */
+.club-row {
+  font-size: 4.5em; /* Трохи менше */
+  color: #f6c453; /* Золотистий колір */
 }
 
 footer {
@@ -95,7 +93,7 @@ footer {
 }
 
 @keyframes fadeUp {
-  0% { transform: translateY(20px); opacity: 0; }
+  0% { transform: translateY(30px); opacity: 0; }
   100% { transform: translateY(0); opacity: 1; }
 }
 
@@ -106,8 +104,8 @@ footer {
 
 @media (max-width: 768px) {
   .header-logo { width: 220px; }
-  .cell:first-child { font-size: 2.5em; }
-  .cell:last-child { font-size: 1.8em; }
+  .name-row { font-size: 2.8em; }
+  .club-row { font-size: 1.8em; }
   .scoreboard { padding: 30px; }
 }
 </style>
@@ -122,7 +120,7 @@ footer {
 
 <div class="scoreboard" id="scoreboard">
   <div id="content" class="cell-container">
-    <div class="cell">ОЧІКУВАННЯ...</div>
+    <div class="cell">ЗАВАНТАЖЕННЯ...</div>
   </div>
 </div>
 
@@ -143,22 +141,23 @@ async function loadData() {
     const data = await res.json();
     if (!Array.isArray(data)) return;
 
-    // Беремо лише перші дві клітинки (Ім'я та Команда)
-    const fixedRow = data.map(v => {
-      let val = String(v).trim();
-      return (val === "" || val === undefined) ? "—" : val;
-    });
+    // ФІЛЬТР: Беремо тільки перші два елементи, які не є порожніми
+    // Якщо в масиві 7 елементів, ми примусово залишаємо тільки потрібні нам дані з B3 та C3
+    const name = String(data[0] || "").trim();
+    const club = String(data[1] || "").trim();
 
-    const newData = JSON.stringify(fixedRow);
+    const newData = name + club;
     if (newData === lastData) return;
     lastData = newData;
 
     scoreboard.style.filter = "blur(10px)";
 
     setTimeout(() => {
-      content.innerHTML = fixedRow.map((v, i) => 
-        `<div class="cell" style="animation-delay: ${i * 0.1}s">${v}</div>`
-      ).join('');
+      // Малюємо тільки два рядки з різними класами для стилю
+      content.innerHTML = `
+        <div class="cell name-row">${name || "—"}</div>
+        <div class="cell club-row">${club || "—"}</div>
+      `;
       scoreboard.style.filter = "blur(0)";
     }, 400);
 
@@ -166,7 +165,7 @@ async function loadData() {
 }
 
 loadData();
-setInterval(loadData, 3000); // Оновлення раз на 3 секунди
+setInterval(loadData, 3000);
 </script>
 
 </body>
