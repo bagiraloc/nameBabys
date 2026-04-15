@@ -9,9 +9,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Poppins", sans-serif;
-  /* Глибокий градієнт з анімацією мерехтіння */
   background: radial-gradient(circle at top, #1a082b 0%, #0c0215 100%);
-  background-color: #0c0215;
   color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -21,40 +19,31 @@ body {
   text-align: center;
   overflow: hidden;
   position: relative;
-  animation: bgGlow 6s infinite alternate ease-in-out;
 }
 
-/* Анімація м'якого бузкового сяйва фону */
-@keyframes bgGlow {
-  0% { box-shadow: inset 0 0 100px #000; }
-  100% { box-shadow: inset 0 0 150px #2a0d45; }
-}
-
-/* ЕФЕКТ БЛИСКІТОК */
+/* М'яке мерехтіння фону без різких рухів */
 body::before {
   content: "";
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
   background-image: 
     radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1.5px 1.5px at 40px 70px, #c299ff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 50px 160px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 90px 40px, #c299ff, rgba(0,0,0,0));
-  background-size: 200px 200px; /* Густота блискіток */
-  animation: sparkles 4s linear infinite;
-  opacity: 0.4;
+    radial-gradient(1.5px 1.5px at 100px 150px, #c299ff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 50px 160px, #fff, rgba(0,0,0,0));
+  background-size: 300px 300px;
+  animation: bgPulse 8s infinite alternate ease-in-out;
+  opacity: 0.3;
   z-index: 0;
 }
 
-@keyframes sparkles {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-200px); } /* Блискітки ніби пливуть */
+@keyframes bgPulse {
+  0% { opacity: 0.2; transform: scale(1); }
+  100% { opacity: 0.4; transform: scale(1.1); }
 }
 
 header {
   position: absolute;
   top: 40px;
-  animation: fadeIn 1.5s ease-in-out;
   z-index: 10;
 }
 
@@ -85,7 +74,7 @@ header {
   display: flex;
   flex-direction: column;
   justify-content: center; 
-  transition: filter 0.5s ease-in-out;
+  transition: filter 0.5s ease-in-out, opacity 0.5s ease-in-out;
   z-index: 10;
 }
 
@@ -100,7 +89,6 @@ header {
   font-weight: 900; 
   line-height: 1.2;
   text-shadow: 4px 4px 20px rgba(0, 0, 0, 0.6);
-  animation: fadeUp 0.6s ease-out forwards;
 }
 
 .name-row {
@@ -111,7 +99,6 @@ header {
 
 .club-row {
   font-size: 4.5em; 
-  color: #ffffff; 
   opacity: 0.95; 
 }
 
@@ -125,21 +112,10 @@ footer {
   z-index: 10;
 }
 
-@keyframes fadeUp {
-  0% { transform: translateY(30px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 @media (max-width: 768px) {
   .header-logo { width: 220px; }
   .name-row { font-size: 2.8em; }
   .club-row { font-size: 1.8em; }
-  .scoreboard { padding: 30px; }
 }
 </style>
 </head>
@@ -176,12 +152,17 @@ async function loadData() {
 
     const name = String(data[0] || "").trim();
     const club = String(data[1] || "").trim();
+    const currentFullString = name + club;
 
-    const newData = name + club;
-    if (newData === lastData) return;
-    lastData = newData;
+    // ПЕРЕВІРКА: Якщо дані не змінилися — нічого не робимо (не мигаємо)
+    if (currentFullString === lastData) return;
+    
+    // Якщо дані нові — оновлюємо
+    lastData = currentFullString;
 
+    // Ефект плавного переходу тільки при зміні даних
     scoreboard.style.filter = "blur(10px)";
+    scoreboard.style.opacity = "0.7";
 
     setTimeout(() => {
       content.innerHTML = `
@@ -189,12 +170,14 @@ async function loadData() {
         <div class="cell club-row">${club || "—"}</div>
       `;
       scoreboard.style.filter = "blur(0)";
+      scoreboard.style.opacity = "1";
     }, 400);
 
   } catch (e) { console.error("Error", e); }
 }
 
 loadData();
+// Опитування таблиці кожні 3 секунди (тепер без мигання, якщо немає змін)
 setInterval(loadData, 3000);
 </script>
 
