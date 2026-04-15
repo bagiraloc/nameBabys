@@ -13,11 +13,9 @@ body {
   color: #ffffff;
   display: flex;
   flex-direction: column;
-  /* Змінено: притискаємо до верху */
   justify-content: flex-start; 
   align-items: center;
   height: 100vh;
-  /* Відступ від верхнього краю екрана */
   padding-top: 2vh; 
   text-align: center;
   overflow: hidden;
@@ -65,7 +63,6 @@ header {
   box-shadow: 0 0 80px rgba(160, 80, 255, 0.3), inset 0 0 20px rgba(160, 80, 255, 0.2);
   backdrop-filter: blur(20px);
   min-width: 85%; 
-  /* Ще сильніше підтягуємо вгору */
   margin-top: -30px; 
   display: flex;
   flex-direction: column;
@@ -114,11 +111,11 @@ header {
 
 footer {
   position: absolute;
-  bottom: 10px;
+  bottom: 40px; /* Піднято для кращого вигляду */
   color: #bdaaff;
-  font-size: 1.1em; 
+  font-size: 1.2em; 
   font-weight: 600;
-  opacity: 0.5;
+  opacity: 0.7;
   z-index: 10;
 }
 
@@ -128,6 +125,7 @@ footer {
   .club-row { font-size: 1.4em; }
   .logo-estevents { width: 90px; margin-top: 5px; }
   .scoreboard { margin-top: -20px; padding: 25px 15px; }
+  footer { bottom: 20px; font-size: 0.9em; }
 }
 </style>
 </head>
