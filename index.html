@@ -59,28 +59,29 @@ header {
 .cell-container {
   display: flex;
   flex-direction: column;
-  gap: 30px; /* Відступ між іменем та клубом */
+  gap: 30px; 
 }
 
 .cell {
-  color: #ffffff;
-  font-weight: 900; /* Максимальна жирність */
+  color: #ffffff; /* Увесь текст тепер білий */
+  font-weight: 900; 
   line-height: 1.2;
   text-shadow: 4px 4px 20px rgba(0, 0, 0, 0.6);
   animation: fadeUp 0.6s ease-out forwards;
 }
 
-/* Стиль для ІМЕНІ (Перший рядок) */
+/* Стиль для ІМЕНІ */
 .name-row {
-  font-size: 7em; /* Дуже великий шрифт */
+  font-size: 7em; 
   text-transform: uppercase;
   letter-spacing: 3px;
 }
 
-/* Стиль для КЛУБУ (Другий рядок) */
+/* Стиль для КЛУБУ — тепер також білий */
 .club-row {
-  font-size: 4.5em; /* Трохи менше */
-  color: #f6c453; /* Золотистий колір */
+  font-size: 4.5em; 
+  color: #ffffff; 
+  opacity: 0.95; /* Легка прозорість для візуального розділення, але колір білий */
 }
 
 footer {
@@ -141,8 +142,7 @@ async function loadData() {
     const data = await res.json();
     if (!Array.isArray(data)) return;
 
-    // ФІЛЬТР: Беремо тільки перші два елементи, які не є порожніми
-    // Якщо в масиві 7 елементів, ми примусово залишаємо тільки потрібні нам дані з B3 та C3
+    // Беремо тільки B3 (data[0]) та C3 (data[1])
     const name = String(data[0] || "").trim();
     const club = String(data[1] || "").trim();
 
@@ -153,7 +153,6 @@ async function loadData() {
     scoreboard.style.filter = "blur(10px)";
 
     setTimeout(() => {
-      // Малюємо тільки два рядки з різними класами для стилю
       content.innerHTML = `
         <div class="cell name-row">${name || "—"}</div>
         <div class="cell club-row">${club || "—"}</div>
