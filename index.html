@@ -6,139 +6,147 @@
 <title>Sportart Rhythmic — NAME & CLUB</title>
 <style>
 body {
-  margin: 0;
-  padding: 0;
-  font-family: "Poppins", sans-serif;
-  background: radial-gradient(circle at top, #250b3d 0%, #0c0215 100%);
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; 
-  align-items: center;
-  height: 100vh;
-  padding-top: 2vh; 
-  text-align: center;
-  overflow: hidden;
-  position: relative;
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: radial-gradient(circle at top, #250b3d 0%, #0c0215 100%);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; 
+  align-items: center;
+  height: 100vh;
+  padding-top: 2vh; 
+  text-align: center;
+  overflow: hidden;
+  position: relative;
 }
 
 /* Посилене мерехтіння фону */
 body::before {
-  content: "";
-  position: absolute;
-  top: -10%; left: -10%; width: 120%; height: 120%;
-  background-image: 
-    radial-gradient(2px 2px at 40px 60px, #fff, rgba(0,0,0,0)),
-    radial-gradient(3px 3px at 200px 300px, #d1b3ff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 150px 400px, #fff, rgba(0,0,0,0)),
-    radial-gradient(4px 4px at 400px 100px, #a050ff, rgba(0,0,0,0));
-  background-size: 400px 400px;
-  animation: bgPulse 6s infinite alternate ease-in-out;
-  opacity: 0.5;
-  z-index: 0;
+  content: "";
+  position: absolute;
+  top: -10%; left: -10%; width: 120%; height: 120%;
+  background-image: 
+    radial-gradient(2px 2px at 40px 60px, #fff, rgba(0,0,0,0)),
+    radial-gradient(3px 3px at 200px 300px, #d1b3ff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 150px 400px, #fff, rgba(0,0,0,0)),
+    radial-gradient(4px 4px at 400px 100px, #a050ff, rgba(0,0,0,0));
+  background-size: 400px 400px;
+  animation: bgPulse 6s infinite alternate ease-in-out;
+  opacity: 0.5;
+  z-index: 0;
 }
 
 @keyframes bgPulse {
-  0% { opacity: 0.3; transform: scale(1) rotate(0deg); filter: hue-rotate(0deg); }
-  100% { opacity: 0.7; transform: scale(1.1) rotate(1deg); filter: hue-rotate(20deg); }
+  0% { opacity: 0.3; transform: scale(1) rotate(0deg); filter: hue-rotate(0deg); }
+  100% { opacity: 0.7; transform: scale(1.1) rotate(1deg); filter: hue-rotate(20deg); }
 }
 
 header {
-  margin-bottom: 0px;
-  z-index: 10;
+  margin-bottom: 0px;
+  z-index: 10;
 }
 
-.header-logo {
-  width: 550px; 
-  height: auto;
-  filter: drop-shadow(0 0 25px rgba(194, 153, 255, 0.6));
-  display: block;
+/* Ефект кришталевих літер */
+.crystal-text {
+  font-size: 4.5em;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  margin: 0;
+  padding: 20px;
+  background: linear-gradient(to bottom, #ffffff 0%, #e0d5ff 40%, #c299ff 50%, #e0d5ff 60%, #ffffff 100%);
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4);
+  filter: drop-shadow(0px 5px 15px rgba(194, 153, 255, 0.7)) drop-shadow(0px 0px 25px rgba(255, 255, 255, 0.8));
 }
 
 .scoreboard {
-  background: rgba(255, 255, 255, 0.07);
-  border: 4px solid rgba(200, 150, 255, 0.6); 
-  border-radius: 40px;
-  padding: 40px 40px; 
-  box-shadow: 0 0 80px rgba(160, 80, 255, 0.3), inset 0 0 20px rgba(160, 80, 255, 0.2);
-  backdrop-filter: blur(20px);
-  min-width: 85%; 
-  margin-top: -30px; 
-  display: flex;
-  flex-direction: column;
-  justify-content: center; 
-  transition: filter 0.5s ease-in-out, opacity 0.5s ease-in-out;
-  z-index: 10;
+  background: rgba(255, 255, 255, 0.07);
+  border: 4px solid rgba(200, 150, 255, 0.6); 
+  border-radius: 40px;
+  padding: 40px 40px; 
+  box-shadow: 0 0 80px rgba(160, 80, 255, 0.3), inset 0 0 20px rgba(160, 80, 255, 0.2);
+  backdrop-filter: blur(20px);
+  min-width: 85%; 
+  margin-top: -30px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  transition: filter 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  z-index: 10;
 }
 
 .cell-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px; 
+  display: flex;
+  flex-direction: column;
+  gap: 10px; 
 }
 
 .cell {
-  color: #ffffff; 
-  font-weight: 900; 
-  line-height: 1.1;
-  text-shadow: 
-    0 0 10px rgba(255, 255, 255, 0.4),
-    0 0 20px rgba(194, 153, 255, 0.8),
-    0 0 40px rgba(160, 80, 255, 0.6),
-    4px 4px 15px rgba(0, 0, 0, 0.8);
+  color: #ffffff; 
+  font-weight: 900; 
+  line-height: 1.1;
+  text-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.4),
+    0 0 20px rgba(194, 153, 255, 0.8),
+    0 0 40px rgba(160, 80, 255, 0.6),
+    4px 4px 15px rgba(0, 0, 0, 0.8);
 }
 
 .name-row {
-  font-size: 7.5em; 
-  text-transform: uppercase;
-  letter-spacing: 4px;
+  font-size: 7.5em; 
+  text-transform: uppercase;
+  letter-spacing: 4px;
 }
 
 .club-row {
-  font-size: 4.8em; 
-  opacity: 0.95;
-  color: #e0d5ff;
+  font-size: 4.8em; 
+  opacity: 0.95;
+  color: #e0d5ff;
 }
 
 .logo-estevents {
-  margin-top: 5px; 
-  width: 150px;
-  height: auto;
-  z-index: 10;
-  opacity: 0.9;
-  filter: drop-shadow(0 0 10px rgba(194, 153, 255, 0.3));
+  margin-top: 5px; 
+  width: 150px;
+  height: auto;
+  z-index: 10;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 10px rgba(194, 153, 255, 0.3));
 }
 
 footer {
-  position: absolute;
-  bottom: 40px;
-  color: #bdaaff;
-  font-size: 1.2em; 
-  font-weight: 600;
-  opacity: 0.7;
-  z-index: 10;
+  position: absolute;
+  bottom: 40px;
+  color: #bdaaff;
+  font-size: 1.2em; 
+  font-weight: 600;
+  opacity: 0.7;
+  z-index: 10;
 }
 
 @media (max-width: 768px) {
-  .header-logo { width: 280px; }
-  .name-row { font-size: 2.2em; }
-  .club-row { font-size: 1.4em; }
-  .logo-estevents { width: 90px; margin-top: 5px; }
-  .scoreboard { margin-top: -20px; padding: 25px 15px; }
-  footer { bottom: 20px; font-size: 0.9em; }
+  .crystal-text { font-size: 2.2em; padding: 10px; }
+  .name-row { font-size: 2.2em; }
+  .club-row { font-size: 1.4em; }
+  .logo-estevents { width: 90px; margin-top: 5px; }
+  .scoreboard { margin-top: -20px; padding: 25px 15px; }
+  footer { bottom: 20px; font-size: 0.9em; }
 }
 </style>
 </head>
 <body>
 
 <header>
-  <img src="logo_sportart.png.jpg" alt="Sport Art Cup" class="header-logo">
+  <h1 class="crystal-text">КРИШТАЛЕВА КОРОНА</h1>
 </header>
 
 <div class="scoreboard" id="scoreboard">
-  <div id="content" class="cell-container">
-    <div class="cell">ЗАВАНТАЖЕННЯ...</div>
-  </div>
+  <div id="content" class="cell-container">
+    <div class="cell">ЗАВАНТАЖЕННЯ...</div>
+  </div>
 </div>
 
 <img src="logo_estevents.png.png" alt="EstEvents Logo" class="logo-estevents">
@@ -150,37 +158,37 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyhuV7wnJIyk0oSdbLR1_np
 let lastData = "";
 
 async function loadData() {
-  const scoreboard = document.getElementById("scoreboard");
-  const content = document.getElementById("content");
+  const scoreboard = document.getElementById("scoreboard");
+  const content = document.getElementById("content");
 
-  try {
-    const res = await fetch(API_URL + "?t=" + Date.now());
-    if (!res.ok) return;
+  try {
+    const res = await fetch(API_URL + "?t=" + Date.now());
+    if (!res.ok) return;
 
-    const data = await res.json();
-    if (!Array.isArray(data)) return;
+    const data = await res.json();
+    if (!Array.isArray(data)) return;
 
-    const name = String(data[0] || "").trim();
-    const club = String(data[1] || "").trim();
-    const currentFullString = name + club;
+    const name = String(data[0] || "").trim();
+    const club = String(data[1] || "").trim();
+    const currentFullString = name + club;
 
-    if (currentFullString === lastData) return;
-    
-    lastData = currentFullString;
+    if (currentFullString === lastData) return;
+    
+    lastData = currentFullString;
 
-    scoreboard.style.filter = "blur(10px)";
-    scoreboard.style.opacity = "0.7";
+    scoreboard.style.filter = "blur(10px)";
+    scoreboard.style.opacity = "0.7";
 
-    setTimeout(() => {
-      content.innerHTML = `
-        <div class="cell name-row">${name || "—"}</div>
-        <div class="cell club-row">${club || "—"}</div>
-      `;
-      scoreboard.style.filter = "blur(0)";
-      scoreboard.style.opacity = "1";
-    }, 400);
+    setTimeout(() => {
+      content.innerHTML = `
+        <div class="cell name-row">${name || "—"}</div>
+        <div class="cell club-row">${club || "—"}</div>
+      `;
+      scoreboard.style.filter = "blur(0)";
+      scoreboard.style.opacity = "1";
+    }, 400);
 
-  } catch (e) { console.error("Error", e); }
+  } catch (e) { console.error("Error", e); }
 }
 
 loadData();
