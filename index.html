@@ -14,10 +14,10 @@ body {
   color: #ffffff;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  /* ЦЕНТРУВАННЯ ПО ВЕРТИКАЛІ ТА ГОРИЗОНТАЛІ */
+  justify-content: center; 
   align-items: center;
   height: 100vh;
-  padding-top: 2vh;
   text-align: center;
   overflow: hidden;
   position: relative;
@@ -45,17 +45,17 @@ body::before {
 }
 
 header {
-  margin-bottom: 0px;
+  margin-bottom: 20px;
   z-index: 10;
 }
 
 /* КАЛІГРАФІЧНИЙ ХРУСТАЛЬНИЙ ЗАГОЛОВОК */
 .crystal-royal-script {
   font-family: 'Pinyon Script', cursive;
-  font-size: 7.5em; /* Великий розмір для рукописного шрифту */
+  font-size: 7.5em; 
   font-weight: 400;
-  margin: 10px 0;
-  line-height: 1;
+  margin: 0;
+  line-height: 0.9;
   background: linear-gradient(
     180deg, 
     #ffffff 0%, 
@@ -80,8 +80,7 @@ header {
   box-shadow: 0 0 80px rgba(160, 80, 255, 0.3), inset 0 0 20px rgba(160, 80, 255, 0.2);
   backdrop-filter: blur(20px);
   min-width: 85%; 
-  /* ЩЕ ТРОШКИ ОПУСТИЛИ РАМКУ */
-  margin-top: 70px; 
+  margin-top: 40px; 
   display: flex;
   flex-direction: column;
   justify-content: center; 
@@ -119,7 +118,7 @@ header {
 }
 
 .logo-estevents {
-  margin-top: 20px; 
+  margin-top: 40px; 
   width: 150px;
   height: auto;
   z-index: 10;
@@ -140,7 +139,8 @@ footer {
   .crystal-royal-script { font-size: 3.5em; }
   .name-row { font-size: 2.2em; }
   .club-row { font-size: 1.4em; }
-  .scoreboard { margin-top: 30px; padding: 25px 15px; }
+  .scoreboard { margin-top: 20px; padding: 25px 15px; }
+  .logo-estevents { margin-top: 20px; width: 100px; }
   footer { bottom: 15px; font-size: 0.8em; }
 }
 </style>
