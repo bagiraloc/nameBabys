@@ -22,7 +22,7 @@ body {
   position: relative;
 }
 
-/* Эффект мерцания звезд на фоне */
+/* Ефект мерехтіння зірок на фоні */
 body::before {
   content: "";
   position: absolute;
@@ -44,46 +44,22 @@ body::before {
 }
 
 header {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.tiara-container {
-  width: 280px; 
-  height: auto;
-  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 30px rgba(255, 100, 100, 0.3));
-  margin-bottom: -10px;
-  animation: tiaraFloat 4s infinite ease-in-out;
-}
-
-@keyframes tiaraFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-.diamond-sparkle {
-  animation: sparkle 2s infinite alternate ease-in-out;
-}
-
-@keyframes sparkle {
-  0% { opacity: 0.4; filter: brightness(1); }
-  100% { opacity: 1; filter: brightness(2) blur(1px); }
-}
-
-/* Настройки для вашего нового логотипа */
+/* Налаштування для збільшеного логотипу */
 .logo-etnika-cup-img {
-  max-width: 90%;
-  width: 550px; 
+  max-width: 95%;
+  width: 850px; /* Збільшено розмір */
   height: auto;
-  margin-top: -5px;
-  margin-bottom: -15px;
-  /* Добавляем мягкое свечение логотипу */
+  /* М'яке свічення навколо напису */
   filter: 
-    drop-shadow(0 0 10px rgba(255, 255, 255, 0.3))
-    drop-shadow(0 0 20px rgba(255, 69, 0, 0.4));
+    drop-shadow(0 0 15px rgba(255, 255, 255, 0.4))
+    drop-shadow(0 0 35px rgba(255, 69, 0, 0.5));
 }
 
 .scoreboard {
@@ -94,7 +70,7 @@ header {
   box-shadow: 0 0 80px rgba(255, 0, 0, 0.3), inset 0 0 20px rgba(255, 69, 0, 0.2);
   backdrop-filter: blur(20px);
   min-width: 85%; 
-  margin-top: 30px; 
+  margin-top: 10px; 
   display: flex;
   flex-direction: column;
   justify-content: center; 
@@ -150,11 +126,10 @@ footer {
 }
 
 @media (max-width: 768px) {
-  .tiara-container { width: 150px; }
-  .logo-etnika-cup-img { width: 280px; }
+  .logo-etnika-cup-img { width: 320px; }
   .name-row { font-size: 2.2em; }
   .club-row { font-size: 1.4em; }
-  .scoreboard { margin-top: 20px; padding: 25px 15px; }
+  .scoreboard { margin-top: 15px; padding: 25px 15px; }
   .logo-estevents { margin-top: 20px; width: 100px; }
   footer { bottom: 15px; font-size: 0.8em; }
 }
@@ -163,36 +138,6 @@ footer {
 <body>
 
 <header>
-  <div class="tiara-container">
-    <svg viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M20 80C60 70 140 70 180 80" stroke="url(#gold_grad)" stroke-width="4" stroke-linecap="round"/>
-      <path d="M30 75C70 60 130 60 170 75" stroke="url(#gold_grad)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
-      
-      <path d="M100 20L115 55L100 75L85 55L100 20Z" fill="url(#diamond_grad)" class="diamond-sparkle"/>
-      <path d="M70 40L80 65L70 75L60 65L70 40Z" fill="url(#diamond_grad)" class="diamond-sparkle" style="animation-delay: 0.5s"/>
-      <path d="M130 40L140 65L130 75L120 65L130 40Z" fill="url(#diamond_grad)" class="diamond-sparkle" style="animation-delay: 0.8s"/>
-      <path d="M45 55L52 70L45 78L38 70L45 55Z" fill="url(#diamond_grad)" class="diamond-sparkle" style="animation-delay: 1.2s"/>
-      <path d="M155 55L162 70L155 78L148 70L155 55Z" fill="url(#diamond_grad)" class="diamond-sparkle" style="animation-delay: 1.5s"/>
-
-      <circle cx="100" cy="40" r="2.5" fill="white" class="diamond-sparkle"/>
-      <circle cx="70" cy="55" r="2" fill="white" class="diamond-sparkle" style="animation-delay: 0.3s"/>
-      <circle cx="130" cy="55" r="2" fill="white" class="diamond-sparkle" style="animation-delay: 0.6s"/>
-
-      <defs>
-        <linearGradient id="gold_grad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#FFD700" />
-          <stop offset="50%" stop-color="#FFFFFF" />
-          <stop offset="100%" stop-color="#FFA500" />
-        </linearGradient>
-        <linearGradient id="diamond_grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="white" />
-          <stop offset="50%" stop-color="#FFF5E0" />
-          <stop offset="100%" stop-color="#FFD700" />
-        </linearGradient>
-      </defs>
-    </svg>
-  </div>
-  
   <img src="Gemini_Generated_Image_jqk4cgjqk4cgjqk4.png" alt="ETNIKA CUP Logo" class="logo-etnika-cup-img">
 </header>
 
@@ -229,7 +174,6 @@ async function loadData() {
     
     lastData = currentFullString;
 
-    // Плавный переход при обновлении данных
     scoreboard.style.filter = "blur(10px)";
     scoreboard.style.opacity = "0.7";
 
@@ -246,7 +190,7 @@ async function loadData() {
 }
 
 loadData();
-setInterval(loadData, 3000); // Обновление каждые 3 секунды
+setInterval(loadData, 3000); 
 </script>
 
 </body>
