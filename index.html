@@ -4,13 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ETNIKA CUP — Scoreboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&family=Poppins:wght@900&display=swap" rel="stylesheet">
+<!-- Підключено шрифт Julius Sans One для ідентичності з фото (літера А без перетинки) -->
+<link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=Poppins:wght@900&display=swap" rel="stylesheet">
 <style>
 body {
   margin: 0;
   padding: 0;
   font-family: "Poppins", sans-serif;
-  /* Змінено на алий (червоний) градієнт */
   background: radial-gradient(circle at top, #8b0000 0%, #2b0000 100%);
   color: #ffffff;
   display: flex;
@@ -23,7 +23,6 @@ body {
   position: relative;
 }
 
-/* Мерехтіння фону — кольори адаптовані під червоний */
 body::before {
   content: "";
   position: absolute;
@@ -52,7 +51,6 @@ header {
   align-items: center;
 }
 
-/* СТИЛІ ДЛЯ ДІАДЕМИ */
 .tiara-container {
   width: 280px; 
   height: auto;
@@ -75,12 +73,13 @@ header {
   100% { opacity: 1; filter: brightness(2) blur(1px); }
 }
 
+/* СТИЛЬ НАПИСУ ЯК НА ФОТО */
 .crystal-royal-script {
-  font-family: 'Josefin Sans', sans-serif; /* Новий шрифт як на фото */
+  font-family: 'Julius Sans One', sans-serif; 
   font-size: 7.5em; 
-  font-weight: 600;
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 8px; /* Додано міжлітерний інтервал для схожості з лого */
+  letter-spacing: 20px; /* Великий відступ як у логотипі */
   margin: 0;
   line-height: 1.1;
   background: linear-gradient(
@@ -97,11 +96,12 @@ header {
     drop-shadow(0 0 10px rgba(255, 255, 255, 0.4))
     drop-shadow(0 0 25px rgba(255, 69, 0, 0.5));
   padding: 0 20px;
+  margin-right: -20px; /* Компенсація останнього пробілу letter-spacing */
 }
 
 .scoreboard {
   background: rgba(255, 255, 255, 0.07);
-  border: 4px solid #000000; /* Колір рамки змінено на чорний */
+  border: 5px solid #000000; /* РАМКА ЧОРНОГО КОЛЬОРУ */
   border-radius: 40px;
   padding: 40px 40px; 
   box-shadow: 0 0 80px rgba(255, 0, 0, 0.3), inset 0 0 20px rgba(255, 69, 0, 0.2);
@@ -164,7 +164,7 @@ footer {
 
 @media (max-width: 768px) {
   .tiara-container { width: 150px; }
-  .crystal-royal-script { font-size: 3em; letter-spacing: 3px; }
+  .crystal-royal-script { font-size: 2.5em; letter-spacing: 8px; }
   .name-row { font-size: 2.2em; }
   .club-row { font-size: 1.4em; }
   .scoreboard { margin-top: 20px; padding: 25px 15px; }
@@ -206,7 +206,8 @@ footer {
     </svg>
   </div>
   
-  <h1 class="crystal-royal-script">ETNİKA CUP</h1>
+  <!-- Текст тепер відповідає шрифту на фото (літера А без палички) -->
+  <h1 class="crystal-royal-script">ETNIKA CUP</h1>
 </header>
 
 <div class="scoreboard" id="scoreboard">
