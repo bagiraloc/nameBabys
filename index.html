@@ -4,13 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ETNIKA CUP — Scoreboard</title>
-<!-- Підключено шрифт Julius Sans One для ідентичності з фото (літера А без перетинки) -->
-<link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=Poppins:wght@900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@900&display=swap" rel="stylesheet">
 <style>
 body {
   margin: 0;
   padding: 0;
   font-family: "Poppins", sans-serif;
+  /* Змінено на алий (червоний) градієнт */
   background: radial-gradient(circle at top, #8b0000 0%, #2b0000 100%);
   color: #ffffff;
   display: flex;
@@ -23,6 +23,7 @@ body {
   position: relative;
 }
 
+/* Мерехтіння фону — кольори адаптовані під червоний */
 body::before {
   content: "";
   position: absolute;
@@ -51,6 +52,7 @@ header {
   align-items: center;
 }
 
+/* СТИЛІ ДЛЯ ДІАДЕМИ */
 .tiara-container {
   width: 280px; 
   height: auto;
@@ -73,30 +75,17 @@ header {
   100% { opacity: 1; filter: brightness(2) blur(1px); }
 }
 
-/* СТИЛЬ НАПИСУ ЯК НА ФОТО */
-.crystal-royal-script {
-  font-family: 'Julius Sans One', sans-serif; 
-  font-size: 7.5em; 
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 20px; /* Великий відступ як у логотипі */
-  margin: 0;
-  line-height: 1.1;
-  background: linear-gradient(
-    180deg, 
-    #ffffff 0%, 
-    #fff5e0 30%, 
-    #ffd700 50%, 
-    #ffffff 70%, 
-    #ffc0cb 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+/* СТИЛЬ ДЛЯ КАСТОМНОГО ЛОГОТИПУ, ЗАМІСТЬ СТАРОГО СТИЛЮ НАПИСУ */
+.logo-etnika-custom {
+  max-width: 90%; /* Адаптивність */
+  width: 450px; /* Базовий розмір */
+  height: auto;
+  margin-top: -10px; /* Щоб лого сиділо ближче до діадеми */
+  margin-bottom: -10px;
+  /* Додаємо такий же ефект світіння, як у старого тексту */
   filter: 
     drop-shadow(0 0 10px rgba(255, 255, 255, 0.4))
     drop-shadow(0 0 25px rgba(255, 69, 0, 0.5));
-  padding: 0 20px;
-  margin-right: -20px; /* Компенсація останнього пробілу letter-spacing */
 }
 
 .scoreboard {
@@ -164,7 +153,7 @@ footer {
 
 @media (max-width: 768px) {
   .tiara-container { width: 150px; }
-  .crystal-royal-script { font-size: 2.5em; letter-spacing: 8px; }
+  .logo-etnika-custom { width: 300px; } /* Адаптивний розмір для мобільних */
   .name-row { font-size: 2.2em; }
   .club-row { font-size: 1.4em; }
   .scoreboard { margin-top: 20px; padding: 25px 15px; }
@@ -206,8 +195,7 @@ footer {
     </svg>
   </div>
   
-  <!-- Текст тепер відповідає шрифту на фото (літера А без палички) -->
-  <h1 class="crystal-royal-script">ETNIKA CUP</h1>
+  <img src="etnika_cup_logo.png" alt="ETNIKA CUP Custom Logo" class="logo-etnika-custom">
 </header>
 
 <div class="scoreboard" id="scoreboard">
