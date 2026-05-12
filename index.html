@@ -10,7 +10,6 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Poppins", sans-serif;
-  /* Змінено на алий (червоний) градієнт */
   background: radial-gradient(circle at top, #8b0000 0%, #2b0000 100%);
   color: #ffffff;
   display: flex;
@@ -23,7 +22,7 @@ body {
   position: relative;
 }
 
-/* Мерехтіння фону — кольори адаптовані під червоний */
+/* Эффект мерцания звезд на фоне */
 body::before {
   content: "";
   position: absolute;
@@ -52,7 +51,6 @@ header {
   align-items: center;
 }
 
-/* СТИЛІ ДЛЯ ДІАДЕМИ */
 .tiara-container {
   width: 280px; 
   height: auto;
@@ -75,22 +73,22 @@ header {
   100% { opacity: 1; filter: brightness(2) blur(1px); }
 }
 
-/* СТИЛЬ ДЛЯ КАСТОМНОГО ЛОГОТИПУ, ЗАМІСТЬ СТАРОГО СТИЛЮ НАПИСУ */
-.logo-etnika-custom {
-  max-width: 90%; /* Адаптивність */
-  width: 450px; /* Базовий розмір */
+/* Настройки для вашего нового логотипа */
+.logo-etnika-cup-img {
+  max-width: 90%;
+  width: 550px; 
   height: auto;
-  margin-top: -10px; /* Щоб лого сиділо ближче до діадеми */
-  margin-bottom: -10px;
-  /* Додаємо такий же ефект світіння, як у старого тексту */
+  margin-top: -5px;
+  margin-bottom: -15px;
+  /* Добавляем мягкое свечение логотипу */
   filter: 
-    drop-shadow(0 0 10px rgba(255, 255, 255, 0.4))
-    drop-shadow(0 0 25px rgba(255, 69, 0, 0.5));
+    drop-shadow(0 0 10px rgba(255, 255, 255, 0.3))
+    drop-shadow(0 0 20px rgba(255, 69, 0, 0.4));
 }
 
 .scoreboard {
   background: rgba(255, 255, 255, 0.07);
-  border: 5px solid #000000; /* РАМКА ЧОРНОГО КОЛЬОРУ */
+  border: 5px solid #000000; 
   border-radius: 40px;
   padding: 40px 40px; 
   box-shadow: 0 0 80px rgba(255, 0, 0, 0.3), inset 0 0 20px rgba(255, 69, 0, 0.2);
@@ -153,7 +151,7 @@ footer {
 
 @media (max-width: 768px) {
   .tiara-container { width: 150px; }
-  .logo-etnika-custom { width: 300px; } /* Адаптивний розмір для мобільних */
+  .logo-etnika-cup-img { width: 280px; }
   .name-row { font-size: 2.2em; }
   .club-row { font-size: 1.4em; }
   .scoreboard { margin-top: 20px; padding: 25px 15px; }
@@ -195,7 +193,7 @@ footer {
     </svg>
   </div>
   
-  <img src="etnika_cup_logo.png" alt="ETNIKA CUP Custom Logo" class="logo-etnika-custom">
+  <img src="Gemini_Generated_Image_jqk4cgjqk4cgjqk4.png" alt="ETNIKA CUP Logo" class="logo-etnika-cup-img">
 </header>
 
 <div class="scoreboard" id="scoreboard">
@@ -231,6 +229,7 @@ async function loadData() {
     
     lastData = currentFullString;
 
+    // Плавный переход при обновлении данных
     scoreboard.style.filter = "blur(10px)";
     scoreboard.style.opacity = "0.7";
 
@@ -243,11 +242,11 @@ async function loadData() {
       scoreboard.style.opacity = "1";
     }, 400);
 
-  } catch (e) { console.error("Error", e); }
+  } catch (e) { console.error("Error fetching data:", e); }
 }
 
 loadData();
-setInterval(loadData, 3000);
+setInterval(loadData, 3000); // Обновление каждые 3 секунды
 </script>
 
 </body>
