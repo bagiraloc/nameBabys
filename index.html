@@ -54,9 +54,8 @@ header {
 /* Налаштування для збільшеного логотипу */
 .logo-etnika-cup-img {
   max-width: 95%;
-  width: 850px; /* Збільшено розмір */
+  width: 850px; 
   height: auto;
-  /* М'яке свічення навколо напису */
   filter: 
     drop-shadow(0 0 15px rgba(255, 255, 255, 0.4))
     drop-shadow(0 0 35px rgba(255, 69, 0, 0.5));
@@ -107,12 +106,16 @@ header {
   color: #ffe0e0;
 }
 
+/* ЛОГОТИП Est Events У ВЕРХНЬОМУ ПРАВОМУ КУТІ */
 .logo-estevents {
-  margin-top: 30px; 
-  width: 150px;
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  width: 180px; /* Трохи збільшив для кращої видимості в куті */
   height: auto;
-  z-index: 10;
+  z-index: 20;
   opacity: 0.9;
+  filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
 }
 
 footer {
@@ -130,12 +133,14 @@ footer {
   .name-row { font-size: 2.2em; }
   .club-row { font-size: 1.4em; }
   .scoreboard { margin-top: 15px; padding: 25px 15px; }
-  .logo-estevents { margin-top: 20px; width: 100px; }
+  .logo-estevents { width: 100px; top: 15px; right: 15px; }
   footer { bottom: 15px; font-size: 0.8em; }
 }
 </style>
 </head>
 <body>
+
+<img src="logo_estevents.png.png" alt="EstEvents Logo" class="logo-estevents">
 
 <header>
   <img src="Gemini_Generated_Image_jqk4cgjqk4cgjqk4.png" alt="ETNIKA CUP Logo" class="logo-etnika-cup-img">
@@ -146,8 +151,6 @@ footer {
     <div class="cell">ЗАВАНТАЖЕННЯ...</div>
   </div>
 </div>
-
-<img src="logo_estevents.png.png" alt="EstEvents Logo" class="logo-estevents">
 
 <footer>© 2026 EstEvents by Емма Щелецька</footer>
 
