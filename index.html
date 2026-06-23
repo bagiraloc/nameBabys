@@ -8,13 +8,9 @@
 
   /* Фон з зірками */
   body::after {
-    content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    z-index: 0;
-    background-image: 
-      radial-gradient(1.5px 1.5px at 10% 10%, #FFD700, transparent),
-      radial-gradient(1px 1px at 30% 60%, #fff, transparent);
-    background-size: 400px 400px;
-    animation: starTwinkle 4s infinite alternate;
+    content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+    background-image: radial-gradient(1.5px 1.5px at 10% 10%, #FFD700, transparent), radial-gradient(1px 1px at 30% 60%, #fff, transparent);
+    background-size: 400px 400px; animation: starTwinkle 4s infinite alternate;
   }
   @keyframes starTwinkle { 0% { opacity: 0.3; } 100% { opacity: 1; } }
 
@@ -25,33 +21,24 @@
     width: 1008px; height: 840px; margin: 0 auto; position: relative; z-index: 1;
   }
 
-  /* РОЖЕВА ЗОНА: Логотип тепер на всю ширину між стиками */
-  .top-zone { 
-    grid-column: 1 / 4; display: flex; align-items: center; justify-content: center; position: relative; 
-  }
-  .logo-top { width: 90%; max-height: 120px; object-fit: contain; }
-  .copyright { 
-    position: absolute; right: 20px; top: 10px; 
-    font-size: 12px; color: #ffffff; opacity: 0.6; white-space: nowrap;
-  }
+  /* РОЖЕВА ЗОНА: Максимальний логотип */
+  .top-zone { grid-column: 1 / 4; display: flex; align-items: center; justify-content: center; position: relative; }
+  .logo-top { max-width: 95%; max-height: 140px; object-fit: contain; }
+  .copyright { position: absolute; right: 20px; top: 10px; font-size: 12px; color: #ffffff; opacity: 0.6; }
 
   /* ЗЕЛЕНІ ЗОНИ */
-  .side-zone { 
-    display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 30px 10px; position: relative;
-  }
+  .side-zone { display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 20px 0; }
   
-  /* Контейнер для тексту, що дозволяє перенос */
+  /* Контейнер тексту: дозволяє перенос слів */
   .text-wrapper {
-    display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start;
-    width: 100%; height: 500px; /* Місце до логотипу */
+    display: flex; flex-direction: row; justify-content: center; align-content: flex-start;
+    flex-wrap: wrap; width: 140px; gap: 15px; /* gap створює пробіл між словами */
   }
 
-  .text-stack { 
-    font-weight: 900; color: #eb8eb7; text-transform: uppercase;
-    font-size: 32px; text-align: center; line-height: 1.1; margin: 0 5px;
-  }
+  .word-stack { display: flex; flex-direction: column; align-items: center; }
+  .letter { font-weight: 900; color: #eb8eb7; font-size: 32px; line-height: 1.1; text-transform: uppercase; }
   
-  .logo-side { width: 100px; flex-shrink: 0; } /* Логотип не рухається */
+  .logo-side { width: 100px; margin-top: auto; }
 </style>
 </head>
 <body>
@@ -78,17 +65,21 @@
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbyhuV7wnJIyk0oSdbLR1_np0DS47acXlRAnwTEV7MczrJlfn9GZvOMRTNYkjYciKdFu/exec";
 
-function formatVertical(text) {
-    // Розбиваємо на букви, але додаємо пробіл для перенесення слів
-    return text.split('').map(char => `<div class="text-stack">${char === ' ' ? '<br><br>' : char}</div>`).join('');
+// Логіка розбиття: кожне слово — окремий вертикальний стовпчик
+function formatText(text) {
+    if (!text) return "";
+    return text.split(' ').map(word => {
+        const letters = word.split('').map(char => `<div class="letter">${char}</div>`).join('');
+        return `<div class="word-stack">${letters}</div>`;
+    }).join('');
 }
 
 async function loadData() {
   try {
     const res = await fetch(API_URL + "?t=" + Date.now());
     const data = await res.json();
-    document.getElementById("name-field").innerHTML = formatVertical(data[0] || "");
-    document.getElementById("club-field").innerHTML = formatVertical(data[1] || "");
+    document.getElementById("name-field").innerHTML = formatText(data[0] || "");
+    document.getElementById("club-field").innerHTML = formatText(data[1] || "");
   } catch (e) { console.error("Error:", e); }
 }
 setInterval(loadData, 3000);
