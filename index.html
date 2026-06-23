@@ -2,193 +2,91 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ETNIKA CUP — Scoreboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@900&display=swap" rel="stylesheet">
 <style>
-body {
-  margin: 0;
-  padding: 0;
-  font-family: "Poppins", sans-serif;
-  background: linear-gradient(to bottom, #061a0f, #0c2d1b);
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center; 
-  align-items: center;
-  height: 100vh;
-  text-align: center;
-  overflow: hidden;
-  position: relative;
-}
+  body { 
+    margin: 0; padding: 0; 
+    background: linear-gradient(to bottom, #061a0f, #0c2d1b); 
+    color: #fff; 
+    font-family: "Poppins", sans-serif; 
+    overflow: hidden;
+    display: flex; justify-content: center; align-items: center;
+    height: 100vh;
+  }
 
-/* Більше золотих блискіток-зірочок */
-body::after {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 1;
-  pointer-events: none;
-  background-image: 
-    radial-gradient(1px 1px at 5% 10%, #FFD700, transparent),
-    radial-gradient(1.5px 1.5px at 15% 45%, #fff, transparent),
-    radial-gradient(1px 1px at 25% 80%, #FFD700, transparent),
-    radial-gradient(2px 2px at 40% 20%, #FFF8DC, transparent),
-    radial-gradient(1px 1px at 60% 60%, #FFD700, transparent),
-    radial-gradient(1.5px 1.5px at 75% 10%, #fff, transparent),
-    radial-gradient(1px 1px at 90% 50%, #FFD700, transparent),
-    radial-gradient(2px 2px at 50% 90%, #FFD700, transparent);
-  background-size: 300px 300px;
-  animation: starTwinkle 3s infinite alternate ease-in-out;
-}
+  /* Ефект мерехтливих зірок (фон) */
+  body::after {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 0;
+    background-image: 
+      radial-gradient(1.5px 1.5px at 10% 10%, #FFD700, transparent),
+      radial-gradient(1px 1px at 30% 60%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 80% 20%, #FFD700, transparent),
+      radial-gradient(2px 2px at 50% 90%, #fff, transparent);
+    background-size: 400px 400px;
+    animation: starTwinkle 4s infinite alternate;
+  }
+  @keyframes starTwinkle { 0% { opacity: 0.3; transform: scale(1); } 100% { opacity: 1; transform: scale(1.05); } }
 
-/* Додатковий шар для щільності */
-body::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 1;
-  pointer-events: none;
-  background-image: 
-    radial-gradient(1.2px 1.2px at 10% 90%, #FFD700, transparent),
-    radial-gradient(1px 1px at 30% 30%, #fff, transparent),
-    radial-gradient(1.5px 1.5px at 80% 80%, #FFD700, transparent),
-    radial-gradient(1px 1px at 20% 10%, #FFD700, transparent),
-    radial-gradient(2px 2px at 70% 30%, #FFF8DC, transparent);
-  background-size: 400px 400px;
-  animation: starTwinkle 5s infinite alternate-reverse ease-in-out;
-}
+  /* П-подібна структура (1008x840 px) */
+  .p-screen {
+    display: grid;
+    grid-template-columns: 168px 672px 168px;
+    grid-template-rows: 168px 672px;
+    width: 1008px; height: 840px;
+    position: relative; z-index: 1;
+  }
 
-@keyframes starTwinkle {
-  0% { opacity: 0.4; transform: scale(1); filter: brightness(1); }
-  50% { opacity: 1; filter: brightness(1.5); }
-  100% { opacity: 0.4; transform: scale(1.02); filter: brightness(1); }
-}
+  /* Рожева верхня панель */
+  .top-zone { grid-column: 1 / 4; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
+  .top-zone img { height: 100px; }
+  .top-zone .copyright { font-size: 16px; color: #f2b3cc; opacity: 0.8; }
 
-header {
-  margin-bottom: 20px;
-  z-index: 10;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.logo-etnika-cup-img {
-  max-width: 95%;
-  width: 850px; 
-  height: auto;
-  filter: drop-shadow(0 0 15px rgba(235, 142, 183, 0.5));
-}
-
-.scoreboard {
-  background: rgba(255, 255, 255, 0.07);
-  border: 5px solid #000000; 
-  border-radius: 40px;
-  padding: 40px 40px; 
-  box-shadow: 0 0 80px rgba(235, 142, 183, 0.3);
-  backdrop-filter: blur(20px);
-  min-width: 85%; 
-  margin-top: 10px;
-  margin-bottom: 50px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center; 
-  transition: filter 0.5s ease-in-out, opacity 0.5s ease-in-out;
-  z-index: 10;
-  position: relative;
-}
-
-.cell-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px; 
-}
-
-.cell {
-  color: #eb8eb7; 
-  font-weight: 900; 
-  line-height: 1.1;
-  text-shadow: 0 0 20px rgba(235, 142, 183, 0.8);
-}
-
-.name-row { font-size: 7.5em; text-transform: uppercase; letter-spacing: 4px; }
-.club-row { font-size: 4.8em; opacity: 0.95; color: #eb8eb7; }
-
-.logo-estevents {
-  position: absolute;
-  top: 30px;
-  right: 40px;
-  width: 180px;
-  height: auto;
-  z-index: 20;
-  filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
-}
-
-footer {
-  position: absolute;
-  bottom: 25px;
-  color: #f2b3cc;
-  font-size: 1.1em; 
-  font-weight: 600;
-  opacity: 0.7;
-  z-index: 10;
-}
-
-@media (max-width: 768px) {
-  .logo-etnika-cup-img { width: 320px; }
-  .name-row { font-size: 2.2em; }
-  .club-row { font-size: 1.4em; }
-  .scoreboard { margin-top: 15px; margin-bottom: 30px; padding: 25px 15px; }
-  .logo-estevents { width: 100px; top: 15px; right: 15px; }
-  footer { bottom: 10px; font-size: 0.8em; }
-}
+  /* Зелені бічні панелі */
+  .side-zone { display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 20px 0; }
+  .text-vertical {
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    font-size: 45px; font-weight: 900; color: #eb8eb7;
+    text-transform: uppercase; text-shadow: 0 0 15px rgba(235,142,183,0.7);
+  }
+  .side-zone img { width: 100px; }
 </style>
 </head>
 <body>
 
-<img src="logo_estevents.png.png" alt="EstEvents Logo" class="logo-estevents">
+<div class="p-screen">
+  <div class="top-zone">
+    <img src="Lemberg Cup.png" alt="Logo">
+    <div class="copyright">© 2026 EstEvents by Емма Щелецька</div>
+  </div>
 
-<header>
-  <img src="Lemberg Cup.png" alt="ETNIKA CUP Logo" class="logo-etnika-cup-img">
-</header>
+  <div class="side-zone">
+    <div class="text-vertical" id="name-field">ЗАВАНТАЖЕННЯ...</div>
+    <img src="logo_estevents.png.png" alt="Logo">
+  </div>
 
-<div class="scoreboard" id="scoreboard">
-  <div id="content" class="cell-container">
-    <div class="cell">ЗАВАНТАЖЕННЯ...</div>
+  <div class="center-zone"></div>
+
+  <div class="side-zone">
+    <div class="text-vertical" id="club-field"></div>
+    <img src="logo_estevents.png.png" alt="Logo">
   </div>
 </div>
 
-<footer>© 2026 EstEvents by Емма Щелецька</footer>
-
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbyhuV7wnJIyk0oSdbLR1_np0DS47acXlRAnwTEV7MczrJlfn9GZvOMRTNYkjYciKdFu/exec";
-let lastData = "";
 
 async function loadData() {
-  const scoreboard = document.getElementById("scoreboard");
-  const content = document.getElementById("content");
   try {
     const res = await fetch(API_URL + "?t=" + Date.now());
-    if (!res.ok) return;
     const data = await res.json();
-    if (!Array.isArray(data)) return;
-    const name = String(data[0] || "").trim();
-    const club = String(data[1] || "").trim();
-    const currentFullString = name + club;
-    if (currentFullString === lastData) return;
-    lastData = currentFullString;
-    scoreboard.style.filter = "blur(10px)";
-    scoreboard.style.opacity = "0.7";
-    setTimeout(() => {
-      content.innerHTML = `<div class="cell name-row">${name || "—"}</div><div class="cell club-row">${club || "—"}</div>`;
-      scoreboard.style.filter = "blur(0)";
-      scoreboard.style.opacity = "1";
-    }, 400);
-  } catch (e) { console.error("Error fetching data:", e); }
+    document.getElementById("name-field").innerText = data[0] || "";
+    document.getElementById("club-field").innerText = data[1] || "";
+  } catch (e) { console.error("Error:", e); }
 }
+setInterval(loadData, 3000);
 loadData();
-setInterval(loadData, 3000); 
 </script>
 
 </body>
