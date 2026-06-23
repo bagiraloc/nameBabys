@@ -26,7 +26,7 @@
     text-shadow: 0 0 10px #eb8eb7, 0 0 20px #ff007f;
   }
   
-  /* Увеличенный стиль для главного заголовка (70px * 1.4 = 98px) */
+  /* Увеличенный стиль для главного заголовка */
   .logo-text { font-size: 98px; }
 
   .logo-side { width: 100px; flex-shrink: 0; margin-top: auto; }
@@ -82,12 +82,20 @@ class Particle {
     }
 }
 
-const particles = Array.from({length: 300}, () => new Particle());
+// Увеличено количество до 600 для более густого потока
+const particles = Array.from({length: 600}, () => new Particle());
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.globalCompositeOperation = 'screen';
-    particles.forEach(p => { p.update(); p.draw(); });
+    
+    // Сброс shadow для оптимизации
+    ctx.shadowBlur = 0;
+    
+    particles.forEach(p => { 
+        p.update(); 
+        p.draw(); 
+    });
     requestAnimationFrame(animate);
 }
 animate();
