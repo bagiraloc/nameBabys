@@ -18,25 +18,13 @@
   .text-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; width: 168px; overflow: hidden; }
   .word-stack { display: flex; flex-direction: column; align-items: center; font-weight: 900; color: #eb8eb7; text-transform: uppercase; line-height: 1.1; width: 100%; }
   
-  /* ИЗМЕНЕННЫЙ СТИЛЬ БУКВ: Световой объект без пульсации */
+  /* СТИЛЬ БУКВ: Статичное световое свечение */
   .letter { 
     display: flex; justify-content: center; align-items: center; width: 100%; font-size: 45px;
     font-weight: 900; text-transform: uppercase;
-    color: transparent;
-    /* Статичное свечение */
+    color: #eb8eb7;
+    /* Статичное свечение (Outer Glow) */
     text-shadow: 0 0 10px #eb8eb7, 0 0 20px #ff007f;
-    /* Блик (Light Sweep) */
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
-    background-size: 200% 100%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    /* Оставляем только анимацию движения блика */
-    animation: sweepLight 4s infinite linear;
-  }
-
-  @keyframes sweepLight {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
   }
 
   .logo-side { width: 100px; flex-shrink: 0; margin-top: auto; }
