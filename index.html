@@ -38,25 +38,76 @@ body::before {
   z-index: 0;
 }
 
+/* Падаючі зелено-золоті блискітки */
+body::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 1; /* Під табло і логотипами */
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at center, #FFD700 5px, transparent 12px), /* Золото */
+    radial-gradient(circle at center, #ADFF2F 7px, transparent 15px), /* Зелено-золотий */
+    radial-gradient(circle at center, #DAA520 9px, transparent 18px), /* Темне золото */
+    radial-gradient(circle at center, #32CD32 6px, transparent 14px), /* Яскраво-зелений */
+    radial-gradient(circle at center, #F0E68C 10px, transparent 20px), /* Світле золото */
+    radial-gradient(circle at center, #FFDF00 5px, transparent 11px), /* Жовте золото */
+    radial-gradient(circle at center, #9ACD32 8px, transparent 16px); /* Лаймовий */
+  background-size:
+    200px 200px,
+    300px 300px,
+    400px 400px,
+    250px 250px,
+    350px 350px,
+    150px 150px,
+    450px 450px;
+  background-position:
+    0 0,
+    50px 50px,
+    100px 100px,
+    150px 150px,
+    200px 200px,
+    250px 250px,
+    300px 300px;
+  animation: glitterFall 12s linear infinite;
+  opacity: 0.8;
+}
+
 @keyframes bgPulse {
   0% { opacity: 0.3; transform: scale(1) rotate(0deg); }
   100% { opacity: 0.7; transform: scale(1.1) rotate(1deg); }
 }
 
+@keyframes glitterFall {
+  100% {
+    background-position:
+      0 200px,
+      50px 350px,
+      100px 500px,
+      150px 400px,
+      200px 550px,
+      250px 400px,
+      300px 750px;
+  }
+}
+
 header {
   margin-bottom: 20px;
   z-index: 10;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Налаштування для збільшеного логотипу з рожевим свіченням як на афіші */
+/* Налаштування для збільшеного логотипу з перефарбуванням у рожевий колір */
 .logo-etnika-cup-img {
   max-width: 95%;
   width: 850px; 
   height: auto;
+  /* Спеціальний фільтр, що робить біле/чорне зображення рожевим (#eb8eb7) */
   filter: 
+    brightness(0) saturate(100%) invert(72%) sepia(19%) saturate(1072%) hue-rotate(295deg) brightness(95%) contrast(93%)
     drop-shadow(0 0 15px rgba(235, 142, 183, 0.5))
     drop-shadow(0 0 35px rgba(235, 142, 183, 0.7));
 }
@@ -76,6 +127,7 @@ header {
   justify-content: center; 
   transition: filter 0.5s ease-in-out, opacity 0.5s ease-in-out;
   z-index: 10;
+  position: relative;
 }
 
 .cell-container {
