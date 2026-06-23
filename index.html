@@ -12,8 +12,7 @@
     z-index: 0;
     background-image: 
       radial-gradient(1.5px 1.5px at 10% 10%, #FFD700, transparent),
-      radial-gradient(1px 1px at 30% 60%, #fff, transparent),
-      radial-gradient(1.5px 1.5px at 80% 20%, #FFD700, transparent);
+      radial-gradient(1px 1px at 30% 60%, #fff, transparent);
     background-size: 400px 400px;
     animation: starTwinkle 4s infinite alternate;
   }
@@ -26,27 +25,33 @@
     width: 1008px; height: 840px; margin: 0 auto; position: relative; z-index: 1;
   }
 
-  /* 1. РОЖЕВА ПЛОЩИНА (Верх) */
-  .top-zone { grid-column: 1 / 4; display: flex; align-items: center; justify-content: center; position: relative; }
-  .logo-top { max-height: 140px; width: auto; }
+  /* РОЖЕВА ЗОНА: Логотип тепер на всю ширину між стиками */
+  .top-zone { 
+    grid-column: 1 / 4; display: flex; align-items: center; justify-content: center; position: relative; 
+  }
+  .logo-top { width: 90%; max-height: 120px; object-fit: contain; }
   .copyright { 
     position: absolute; right: 20px; top: 10px; 
-    font-size: 12px; color: #ffffff; opacity: 0.6; 
+    font-size: 12px; color: #ffffff; opacity: 0.6; white-space: nowrap;
   }
 
-  /* 2. ЗЕЛЕНІ ПЛОЩИНИ (Боки) */
+  /* ЗЕЛЕНІ ЗОНИ */
   .side-zone { 
-    display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 40px 10px; 
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 30px 10px; position: relative;
   }
   
-  /* Горизонтальний текст (буква під буквою) */
+  /* Контейнер для тексту, що дозволяє перенос */
+  .text-wrapper {
+    display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start;
+    width: 100%; height: 500px; /* Місце до логотипу */
+  }
+
   .text-stack { 
     font-weight: 900; color: #eb8eb7; text-transform: uppercase;
-    font-size: 35px; text-align: center; line-height: 1.1;
-    word-break: break-word;
+    font-size: 32px; text-align: center; line-height: 1.1; margin: 0 5px;
   }
   
-  .logo-side { width: 120px; }
+  .logo-side { width: 100px; flex-shrink: 0; } /* Логотип не рухається */
 </style>
 </head>
 <body>
@@ -58,14 +63,14 @@
   </div>
 
   <div class="side-zone">
-    <div class="text-stack" id="name-field">ЗАВАНТАЖЕННЯ...</div>
+    <div class="text-wrapper" id="name-field"></div>
     <img src="logo_estevents.png.png" class="logo-side" alt="Logo">
   </div>
 
   <div class="center-zone"></div>
 
   <div class="side-zone">
-    <div class="text-stack" id="club-field"></div>
+    <div class="text-wrapper" id="club-field"></div>
     <img src="logo_estevents.png.png" class="logo-side" alt="Logo">
   </div>
 </div>
@@ -73,9 +78,9 @@
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbyhuV7wnJIyk0oSdbLR1_np0DS47acXlRAnwTEV7MczrJlfn9GZvOMRTNYkjYciKdFu/exec";
 
-// Функція для розбиття тексту на рядки (буква під буквою)
 function formatVertical(text) {
-    return text.split('').join('<br>');
+    // Розбиваємо на букви, але додаємо пробіл для перенесення слів
+    return text.split('').map(char => `<div class="text-stack">${char === ' ' ? '<br><br>' : char}</div>`).join('');
 }
 
 async function loadData() {
