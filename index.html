@@ -59,39 +59,38 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 class Particle {
-    constructor() { this.init(); }
-    init() {
+    constructor() { this.init(true); }
+    init(randomY = false) {
         this.x = Math.random() * canvas.width;
-        this.y = canvas.height + Math.random() * 200;
+        // Если при создании частицы она не случайная, ставим ее над экраном
+        this.y = randomY ? Math.random() * canvas.height : -Math.random() * 200;
         this.z = Math.random();
         this.size = (this.z * 5) + 1;
-        this.speed = (this.z * 0.8) + 0.2;
-        this.opacity = this.z * 0.8;
+        this.speed = (this.z * 1.5) + 0.5; // Немного быстрее
+        this.baseOpacity = this.z * 0.8;
     }
     update() {
-        this.y -= this.speed;
-        if (this.y < -50) this.init();
+        this.y += this.speed; // Падение вниз
+        if (this.y > canvas.height + 50) this.init();
     }
     draw() {
+        // Мерцание: меняем прозрачность
+        const flicker = Math.sin(Date.now() * 0.005 + this.x) * 0.3 + 0.7;
         ctx.shadowBlur = this.size * 3;
         ctx.shadowColor = '#00ff41';
-        ctx.fillStyle = `rgba(0, 255, 65, ${this.opacity})`;
+        ctx.fillStyle = `rgba(0, 255, 65, ${this.baseOpacity * flicker})`;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
     }
 }
 
-// Увеличено количество до 600 для более густого потока
 const particles = Array.from({length: 600}, () => new Particle());
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.globalCompositeOperation = 'screen';
-    
-    // Сброс shadow для оптимизации
     ctx.shadowBlur = 0;
-    
     particles.forEach(p => { 
         p.update(); 
         p.draw(); 
