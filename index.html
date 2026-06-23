@@ -22,27 +22,43 @@ body {
   position: relative;
 }
 
-/* Ефект шиммера (мерехтіння) */
+/* Ефект зоряного мерехтіння (фон) */
 body::after {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   z-index: 1;
   pointer-events: none;
-  background-image:
-    radial-gradient(8px 8px at 100px 100px, rgba(255, 255, 255, 0.8), transparent),
-    radial-gradient(6px 6px at 300px 200px, rgba(173, 255, 47, 0.8), transparent),
-    radial-gradient(10px 10px at 500px 400px, rgba(255, 215, 0, 0.6), transparent),
-    radial-gradient(7px 7px at 700px 100px, rgba(50, 205, 50, 0.7), transparent),
-    radial-gradient(5px 5px at 200px 500px, rgba(255, 255, 255, 0.9), transparent);
-  background-size: 600px 600px;
-  animation: shimmer 4s infinite alternate ease-in-out;
+  background-image: 
+    radial-gradient(1px 1px at 10% 20%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 30% 60%, #fff, transparent),
+    radial-gradient(1px 1px at 50% 10%, #fff, transparent),
+    radial-gradient(2px 2px at 80% 40%, #fff, transparent),
+    radial-gradient(1px 1px at 90% 80%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 20% 90%, #fff, transparent);
+  background-size: 500px 500px;
+  animation: starTwinkle 4s infinite alternate ease-in-out;
 }
 
-@keyframes shimmer {
-  0% { transform: scale(1) translateY(0); opacity: 0.4; }
-  50% { opacity: 0.8; }
-  100% { transform: scale(1.1) translateY(-20px); opacity: 0.4; }
+/* Другий шар зірок, що рухається повільніше для глибини */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(1.2px 1.2px at 40% 30%, #ffd700, transparent),
+    radial-gradient(1px 1px at 60% 70%, #adff2f, transparent),
+    radial-gradient(1.5px 1.5px at 10% 50%, #fff, transparent);
+  background-size: 600px 600px;
+  animation: starTwinkle 6s infinite alternate-reverse ease-in-out;
+}
+
+@keyframes starTwinkle {
+  0% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; transform: scale(1.05); }
 }
 
 header {
