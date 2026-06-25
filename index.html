@@ -23,10 +23,10 @@
   
   .top-zone { grid-column: 1 / 4; display: flex; align-items: center; justify-content: center; position: relative; }
   
-  /* Центральная зона теперь имеет относительное позиционирование */
+  /* Центральная зона для позиционирования копирайта */
   .center-zone { position: relative; width: 100%; height: 100%; }
 
-  /* Копирайт закреплен в правом нижнем углу .center-zone */
+  /* Текст прижат к правому краю центральной зоны */
   .copyright { 
     position: absolute; 
     right: 20px; 
@@ -35,7 +35,7 @@
     color: #ffffff; 
     opacity: 0.6; 
     font-weight: 500;
-    white-space: nowrap;
+    text-align: right;
   }
   
   .side-zone { display: flex; flex-direction: column; align-items: center; padding: 20px 0 30px 0; height: 840px; box-sizing: border-box; }
