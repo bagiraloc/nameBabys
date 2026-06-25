@@ -10,11 +10,12 @@
     background: radial-gradient(circle at center, #0a3d24 0%, #061a0f 100%);
   }
   
-  .p-screen { display: grid; grid-template-columns: 168px 672px 168px; grid-template-rows: 168px 672px; width: 1008px; height: 840px; margin: 0 auto; position: relative; z-index: 1; }
+  /* Нові розміри: 168+1176+168 по ширині та 168+840 по висоті */
+  .p-screen { display: grid; grid-template-columns: 168px 1176px 168px; grid-template-rows: 168px 840px; width: 1512px; height: 1008px; margin: 0 auto; position: relative; z-index: 1; }
   .top-zone { grid-column: 1 / 4; display: flex; align-items: center; justify-content: center; position: relative; gap: 20px; }
   
   .copyright { position: absolute; right: 20px; top: 10px; font-size: 12px; color: #ffffff; opacity: 0.6; }
-  .side-zone { display: flex; flex-direction: column; align-items: center; padding: 20px 0 30px 0; height: 672px; box-sizing: border-box; }
+  .side-zone { display: flex; flex-direction: column; align-items: center; padding: 20px 0 30px 0; height: 840px; box-sizing: border-box; }
   .text-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; width: 168px; overflow: hidden; }
   .word-stack { display: flex; flex-direction: column; align-items: center; font-weight: 900; color: #eb8eb7; text-transform: uppercase; line-height: 1; width: 100%; justify-content: center; }
   
@@ -35,7 +36,7 @@
 
 <div class="p-screen">
   <div class="top-zone">
-    <div class="letter logo-text">Lemberg Cup</div>
+    <div class="letter logo-text">LEMBERG CUP</div>
     <div class="copyright">© 2026 EstEvents by Емма Щелецька</div>
   </div>
   <div class="side-zone">
@@ -96,8 +97,8 @@ function renderWord(containerId, word) {
     const stack = document.getElementById(`stack-${containerId}`);
     const letterElements = stack.querySelectorAll('.letter');
     
-    // Адаптивное увеличение размера до заполнения
-    let size = 130;
+    // Початковий розмір адаптовано під висоту колонки 840px
+    let size = 150;
     const maxHeight = container.offsetHeight;
     
     const applySize = (s) => {
@@ -105,8 +106,6 @@ function renderWord(containerId, word) {
     };
 
     applySize(size);
-    // Если текст не влезает — уменьшаем, если влезает — можно было бы увеличивать,
-    // но текущая логика берет хороший запас для заполнения
     while (stack.offsetHeight > maxHeight && size > 20) {
         size -= 2;
         applySize(size);
