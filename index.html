@@ -10,11 +10,37 @@
     background: radial-gradient(circle at center, #0a3d24 0%, #061a0f 100%);
   }
   
-  /* Нові розміри: 168+1176+168 по ширині та 168+840 по висоті */
-  .p-screen { display: grid; grid-template-columns: 168px 1176px 168px; grid-template-rows: 168px 840px; width: 1512px; height: 1008px; margin: 0 auto; position: relative; z-index: 1; }
-  .top-zone { grid-column: 1 / 4; display: flex; align-items: center; justify-content: center; position: relative; gap: 20px; }
+  /* Сетка: 84px + 1176px + 84px */
+  .p-screen { 
+    display: grid; 
+    grid-template-columns: 84px 1176px 84px; 
+    grid-template-rows: 168px 840px; 
+    width: 1344px; 
+    height: 1008px; 
+    margin: 0 auto; 
+    position: relative; 
+    z-index: 1; 
+  }
   
-  .copyright { position: absolute; right: 20px; top: 10px; font-size: 12px; color: #ffffff; opacity: 0.6; }
+  .top-zone { 
+    grid-column: 1 / 4; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    position: relative; 
+  }
+  
+  /* Увеличенный размер шрифта для копирайта */
+  .copyright { 
+    position: absolute; 
+    right: 40px; 
+    top: 20px; 
+    font-size: 24px; 
+    color: #ffffff; 
+    opacity: 0.8; 
+    font-weight: 500;
+  }
+  
   .side-zone { display: flex; flex-direction: column; align-items: center; padding: 20px 0 30px 0; height: 840px; box-sizing: border-box; }
   .text-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; width: 168px; overflow: hidden; }
   .word-stack { display: flex; flex-direction: column; align-items: center; font-weight: 900; color: #eb8eb7; text-transform: uppercase; line-height: 1; width: 100%; justify-content: center; }
@@ -26,7 +52,7 @@
     text-shadow: 0 0 10px #eb8eb7, 0 0 20px #ff007f;
   }
   
-  .logo-text { font-size: 98px; }
+  .logo-text { font-size: 160px; white-space: nowrap; }
   .logo-side { width: 100px; flex-shrink: 0; margin-top: auto; }
 </style>
 </head>
@@ -97,7 +123,6 @@ function renderWord(containerId, word) {
     const stack = document.getElementById(`stack-${containerId}`);
     const letterElements = stack.querySelectorAll('.letter');
     
-    // Початковий розмір адаптовано під висоту колонки 840px
     let size = 150;
     const maxHeight = container.offsetHeight;
     
