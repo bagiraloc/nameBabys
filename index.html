@@ -10,18 +10,18 @@
     background: radial-gradient(circle at center, #0a3d24 0%, #061a0f 100%);
   }
   
-  /* Сетка: 84px + 1176px + 84px */
   .p-screen { 
     display: grid; 
-    grid-template-columns: 84px 1176px 84px; 
+    grid-template-columns: 168px 1176px 168px; 
     grid-template-rows: 168px 840px; 
-    width: 1344px; 
+    width: 1512px; 
     height: 1008px; 
     margin: 0 auto; 
     position: relative; 
     z-index: 1; 
   }
   
+  /* Верхняя зона с относительным позиционированием для копирайта */
   .top-zone { 
     grid-column: 1 / 4; 
     display: flex; 
@@ -30,16 +30,18 @@
     position: relative; 
   }
   
-  /* Увеличенный размер шрифта для копирайта */
+  /* Перемещаем копирайт под заголовок */
   .copyright { 
     position: absolute; 
-    right: 40px; 
-    top: 20px; 
+    top: 130px; /* Опускаем на нужную высоту под CUP */
+    right: 180px; /* Привязка к правому краю области CUP */
     font-size: 24px; 
     color: #ffffff; 
-    opacity: 0.8; 
+    opacity: 0.6; 
     font-weight: 500;
   }
+  
+  .center-zone { position: relative; width: 100%; height: 100%; }
   
   .side-zone { display: flex; flex-direction: column; align-items: center; padding: 20px 0 30px 0; height: 840px; box-sizing: border-box; }
   .text-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; width: 168px; overflow: hidden; }
@@ -65,11 +67,14 @@
     <div class="letter logo-text">LEMBERG CUP</div>
     <div class="copyright">© 2026 EstEvents by Емма Щелецька</div>
   </div>
+  
   <div class="side-zone">
     <div class="text-wrapper" id="word1"></div>
     <img src="logo_estevents.png.png" class="logo-side" alt="Logo">
   </div>
+  
   <div class="center-zone"></div>
+  
   <div class="side-zone">
     <div class="text-wrapper" id="word2"></div>
     <img src="logo_estevents.png.png" class="logo-side" alt="Logo">
