@@ -21,7 +21,6 @@
     z-index: 1; 
   }
   
-  /* Верхняя зона с относительным позиционированием для копирайта */
   .top-zone { 
     grid-column: 1 / 4; 
     display: flex; 
@@ -30,15 +29,18 @@
     position: relative; 
   }
   
-  /* Перемещаем копирайт под заголовок */
+  /* Исправленное положение копирайта */
   .copyright { 
     position: absolute; 
-    top: 130px; /* Опускаем на нужную высоту под CUP */
-    right: 180px; /* Привязка к правому краю области CUP */
+    top: 145px;          /* Опустили ниже, чтобы не наезжал на CUP */
+    right: 175px;        /* Сдвинули к правому краю */
+    width: 400px;        /* Ширина блока для корректного выравнивания */
+    text-align: right;   /* Текст выровнен по правому краю */
     font-size: 24px; 
     color: #ffffff; 
     opacity: 0.6; 
     font-weight: 500;
+    white-space: nowrap;
   }
   
   .center-zone { position: relative; width: 100%; height: 100%; }
