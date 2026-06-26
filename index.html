@@ -10,12 +10,11 @@
     background: radial-gradient(circle at center, #0a3d24 0%, #061a0f 100%);
   }
   
-  /* Раздвинули боковые колонки на 30см (105px) с каждой стороны */
   .p-screen { 
     display: grid; 
-    grid-template-columns: 379px 1176px 379px; 
+    grid-template-columns: 274px 1176px 274px; 
     grid-template-rows: 168px 840px; 
-    width: 1934px; /* Увеличили общую ширину */
+    width: 1724px; 
     height: 1008px; 
     margin: 0 auto; 
     position: relative; 
@@ -29,8 +28,9 @@
     justify-content: center; 
   }
   
+  /* Размещаем копирайт в правой колонке */
   .copyright-side { 
-    font-size: 16px; 
+    font-size: 16px; /* Уменьшил размер, чтобы вписалось в 274px */
     color: #ffffff; 
     opacity: 0.7; 
     font-weight: 500;
@@ -43,7 +43,7 @@
   .center-zone { position: relative; width: 100%; height: 100%; }
   
   .side-zone { display: flex; flex-direction: column; align-items: center; padding: 20px 0 30px 0; height: 840px; box-sizing: border-box; }
-  .text-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; width: 379px; overflow: hidden; }
+  .text-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; width: 274px; overflow: hidden; }
   .word-stack { display: flex; flex-direction: column; align-items: center; font-weight: 900; color: #eb8eb7; text-transform: uppercase; line-height: 1; width: 100%; justify-content: center; }
   
   .letter { 
