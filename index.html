@@ -9,7 +9,8 @@
   
   .p-screen { 
     display: grid; 
-    grid-template-columns: 1fr 1176px 1fr; 
+    /* Переменная для ширины боковых колонок, которой будем управлять */
+    grid-template-columns: var(--side-width, 300px) 1176px var(--side-width, 300px); 
     grid-template-rows: 168px 840px; 
     width: 100vw; height: 100vh;
     position: relative; z-index: 1; 
@@ -17,13 +18,15 @@
   
   .top-zone { grid-column: 1 / 4; display: flex; align-items: center; justify-content: center; }
   
-  /* Боковые зоны */
-  .side-zone { 
-    display: flex; flex-direction: column; height: 840px; 
-    padding: 20px 175px 30px 175px; 
-    box-sizing: border-box;
+  /* Панель управления по центру */
+  .controls {
+    position: absolute; top: 180px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 20px;
+    z-index: 999; display: flex; gap: 20px; align-items: center; border: 1px solid #444;
   }
-  
+  .controls button { cursor: pointer; padding: 10px 20px; font-weight: bold; border-radius: 5px; border: none; }
+
+  .side-zone { display: flex; flex-direction: column; align-items: center; height: 840px; padding: 20px; box-sizing: border-box; }
   #side-left { align-items: flex-start; }
   #side-right { align-items: flex-end; }
   
@@ -33,13 +36,6 @@
   .word-stack { display: flex; flex-direction: column; font-weight: 900; color: #eb8eb7; text-transform: uppercase; line-height: 1; width: 100%; }
   .letter { display: flex; align-items: center; font-weight: 900; text-transform: uppercase; color: #eb8eb7; text-shadow: 0 0 10px #eb8eb7, 0 0 20px #ff007f; }
   .logo-side { width: 100px; flex-shrink: 0; margin-top: auto; }
-
-  /* Панель управления */
-  .controls {
-    position: fixed; bottom: 20px; left: 20px; z-index: 100;
-    background: rgba(0,0,0,0.7); padding: 15px; border-radius: 8px; border: 1px solid #444;
-  }
-  .controls button { cursor: pointer; padding: 5px 10px; margin: 2px; }
 </style>
 </head>
 <body>
@@ -47,11 +43,12 @@
 <canvas id="particle-canvas"></canvas>
 
 <div class="controls">
-  <div style="margin-bottom:5px">Левая: <button onclick="changePad('side-left', -10)">←</button><button onclick="changePad('side-left', 10)">→</button></div>
-  <div>Правая: <button onclick="changePad('side-right', -10)">←</button><button onclick="changePad('side-right', 10)">→</button></div>
+  <span>Боковые колонки:</span>
+  <button onclick="changeSideWidth(-20)">Сдвинуть (-)</button>
+  <button onclick="changeSideWidth(20)">Раздвинуть (+)</button>
 </div>
 
-<div class="p-screen">
+<div class="p-screen" id="main-grid">
   <div class="top-zone"><div class="letter" style="font-size: 160px">LEMBERG CUP</div></div>
   <div class="side-zone" id="side-left">
     <div class="text-wrapper" id="word1"></div>
@@ -66,15 +63,13 @@
 </div>
 
 <script>
-// Функция изменения отступов
-function changePad(id, delta) {
-  const el = document.getElementById(id);
-  let currentPad = parseInt(window.getComputedStyle(el).paddingRight);
-  el.style.paddingLeft = (currentPad + delta) + "px";
-  el.style.paddingRight = (currentPad + delta) + "px";
+let currentSideWidth = 300;
+function changeSideWidth(delta) {
+  currentSideWidth += delta;
+  document.documentElement.style.setProperty('--side-width', currentSideWidth + 'px');
 }
 
-// Particle & Data logic
+// Particle logic
 const canvas = document.getElementById('particle-canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
