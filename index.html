@@ -10,45 +10,42 @@
     background: radial-gradient(circle at center, #0a3d24 0%, #061a0f 100%);
   }
   
-  /* Сетка: колонки по 484px */
   .p-screen { 
     display: grid; 
-    grid-template-columns: 484px 1176px 484px; 
+    /* Колонки по краям теперь занимают всё пространство */
+    grid-template-columns: 1fr 1176px 1fr; 
     grid-template-rows: 168px 840px; 
-    width: 2144px; 
-    height: 1008px; 
-    margin: 0 auto; 
+    width: 100vw; 
+    height: 100vh;
+    padding: 0;
     position: relative; 
     z-index: 1; 
   }
   
   .top-zone { grid-column: 1 / 4; display: flex; align-items: center; justify-content: center; }
   
-  .copyright-side { 
-    font-size: 16px; 
-    color: #ffffff; 
-    opacity: 0.7; 
-    font-weight: 500;
-    text-align: right; /* Прижат к правому краю колонки */
-    margin-top: 10px;
-    width: 100%;
+  /* Боковые зоны с отступом 5см (175px) */
+  .side-zone { 
+    display: flex; flex-direction: column; height: 840px; 
+    padding: 20px 175px 30px 175px; /* Отступ 5см по бокам */
+    box-sizing: border-box;
   }
   
-  .side-zone { display: flex; flex-direction: column; align-items: center; padding: 20px 20px 30px 20px; height: 840px; box-sizing: border-box; }
+  /* Выравнивание текста в колонках */
+  #side-left { align-items: flex-start; text-align: left; }
+  #side-right { align-items: flex-end; text-align: right; }
   
-  /* Левая колонка - текст влево */
-  #side-left { align-items: flex-start; }
-  /* Правая колонка - текст вправо */
-  #side-right { align-items: flex-end; }
+  .copyright-side { 
+    font-size: 16px; color: #ffffff; opacity: 0.7; font-weight: 500;
+    text-align: right; margin-top: 10px; width: 100%;
+  }
   
-  .text-wrapper { flex: 1; display: flex; align-items: center; width: 444px; overflow: hidden; }
+  .text-wrapper { flex: 1; display: flex; align-items: center; width: 100%; overflow: hidden; }
   .word-stack { display: flex; flex-direction: column; font-weight: 900; color: #eb8eb7; text-transform: uppercase; line-height: 1; width: 100%; }
   
   .letter { 
-    display: flex; align-items: center;
-    font-weight: 900; text-transform: uppercase;
-    color: #eb8eb7;
-    text-shadow: 0 0 10px #eb8eb7, 0 0 20px #ff007f;
+    display: flex; align-items: center; font-weight: 900; text-transform: uppercase;
+    color: #eb8eb7; text-shadow: 0 0 10px #eb8eb7, 0 0 20px #ff007f;
   }
   
   .logo-text { font-size: 160px; white-space: nowrap; }
@@ -84,31 +81,21 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-class Particle {
-    constructor() { this.init(); }
-    init() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2.5 + 0.5;
-        this.baseOpacity = Math.random() * 0.7 + 0.1;
-        this.flickerSpeed = Math.random() * 0.02 + 0.01;
-        this.flickerOffset = Math.random() * Math.PI * 2;
-    }
-    draw() {
-        const flicker = Math.sin(Date.now() * this.flickerSpeed + this.flickerOffset) * 0.5 + 0.5;
-        ctx.fillStyle = `rgba(0, 255, 65, ${this.baseOpacity * flicker})`;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-}
-
-const particles = Array.from({length: 800}, () => new Particle());
+// ... (Particle logic remains same) ...
+const particles = Array.from({length: 800}, () => ({
+    x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+    size: Math.random() * 2.5 + 0.5, baseOpacity: Math.random() * 0.7 + 0.1,
+    flickerSpeed: Math.random() * 0.02 + 0.01, flickerOffset: Math.random() * Math.PI * 2
+}));
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.globalCompositeOperation = 'screen';
-    particles.forEach(p => p.draw());
+    particles.forEach(p => {
+        const flicker = Math.sin(Date.now() * p.flickerSpeed + p.flickerOffset) * 0.5 + 0.5;
+        ctx.fillStyle = `rgba(0, 255, 65, ${p.baseOpacity * flicker})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+    });
     requestAnimationFrame(animate);
 }
 animate();
@@ -118,9 +105,8 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyhuV7wnJIyk0oSdbLR1_np
 function renderWord(containerId, word, align) {
     const container = document.getElementById(containerId);
     if (!word) { container.innerHTML = ""; return; }
-    
     const letters = word.split('').map(char => `<div class="letter" style="justify-content: ${align}">${char}</div>`).join('');
-    container.innerHTML = `<div class="word-stack" id="stack-${containerId}" style="align-items: ${align === 'flex-start' ? 'flex-start' : 'flex-end'}">${letters}</div>`;
+    container.innerHTML = `<div class="word-stack" style="align-items: ${align === 'flex-start' ? 'flex-start' : 'flex-end'}">${letters}</div>`;
 }
 
 async function loadData() { 
@@ -130,7 +116,7 @@ async function loadData() {
         const words = (data[0] || "").trim().split(/\s+/); 
         renderWord("word1", words[0] || "", "flex-start"); 
         renderWord("word2", words[1] || "", "flex-end"); 
-    } catch (e) { console.error("Error:", e); } 
+    } catch (e) { console.error(e); } 
 }
 setInterval(loadData, 3000); loadData();
 </script>
