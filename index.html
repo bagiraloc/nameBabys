@@ -29,7 +29,7 @@
     justify-content: center; 
   }
   
-  /* Панель управления по центру */
+  /* Панель управления ровно по центру */
   .control-panel {
     position: absolute;
     top: 50%;
@@ -70,7 +70,19 @@
   
   .side-zone { display: flex; flex-direction: column; align-items: center; padding: 20px 0 30px 0; height: 840px; box-sizing: border-box; }
   .text-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; width: var(--side-width); overflow: hidden; }
-  .word-stack { display: flex; flex-direction: column; align-items: center; font-weight: 900; color: #000000; text-transform: uppercase; line-height: 1; width: 100%; justify-content: center; }
+  
+  /* Горизонтальное расположение букв */
+  .word-stack { 
+    display: flex; 
+    flex-direction: row; 
+    align-items: center; 
+    justify-content: center;
+    font-weight: 900; 
+    color: #000000; 
+    text-transform: uppercase; 
+    line-height: 1; 
+    width: 100%; 
+  }
   
   .letter { 
     display: flex; justify-content: center; align-items: center;
@@ -79,7 +91,7 @@
     text-shadow: 0 0 8px rgba(255, 0, 0, 0.6), 0 0 15px rgba(0, 0, 0, 0.8);
   }
   
-  .logo-text { font-size: 140px; white-space: nowrap; }
+  .logo-text { font-size: 130px; white-space: nowrap; }
   .logo-side { width: 100px; flex-shrink: 0; margin-top: auto; }
 </style>
 </head>
@@ -87,10 +99,11 @@
 
 <canvas id="particle-canvas"></canvas>
 
+<!-- Меню по центру экрана -->
 <div class="control-panel">
-    <button class="control-btn" onclick="updateWidth(-20)">⬅ Вліво</button>
+    <button class="control-btn" onclick="updateWidth(-20)">Зменшити</button>
     <span style="font-weight: bold;">Колонки</span>
-    <button class="control-btn" onclick="updateWidth(20)">Вправо ➡</button>
+    <button class="control-btn" onclick="updateWidth(20)">Збільшити</button>
 </div>
 
 <div class="p-screen">
@@ -165,15 +178,15 @@ function renderWord(containerId, word) {
     const stack = document.getElementById(`stack-${containerId}`);
     const letterElements = stack.querySelectorAll('.letter');
     
-    let size = 150;
-    const maxHeight = container.offsetHeight;
+    let size = 60;
+    const maxWidth = container.offsetWidth;
     
     const applySize = (s) => {
         letterElements.forEach(l => l.style.fontSize = s + "px");
     };
 
     applySize(size);
-    while (stack.offsetHeight > maxHeight && size > 20) {
+    while (stack.offsetWidth > maxWidth && size > 12) {
         size -= 2;
         applySize(size);
     }
@@ -184,9 +197,15 @@ async function loadData() {
         const res = await fetch(API_URL + "?t=" + Date.now()); 
         const data = await res.json(); 
         const words = (data[0] || "").trim().split(/\s+/); 
-        renderWord("word1", words[0] || ""); 
-        renderWord("word2", words[1] || ""); 
-    } catch (e) { console.error("Error:", e); } 
+        
+        // Левый блок — Фамилия, Правый — Имя
+        renderWord("word1", words[0] || "Прізвище"); 
+        renderWord("word2", words[1] || "Ім'я"); 
+    } catch (e) { 
+        console.error("Error:", e); 
+        renderWord("word1", "Прізвище"); 
+        renderWord("word2", "Ім'я"); 
+    } 
 }
 setInterval(loadData, 3000); loadData();
 </script>
