@@ -2,13 +2,13 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8" />
-<title>Lemberg Cup — P-Screen</title>
+<title>Чорні Вівці — P-Screen</title>
 <style>
   :root { --side-width: 274px; }
-  body { margin: 0; background: #061a0f; color: #fff; font-family: "Poppins", sans-serif; overflow: hidden; }
+  body { margin: 0; background: #2b0000; color: #000; font-family: "Poppins", sans-serif; overflow: hidden; }
   #particle-canvas {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-    background: radial-gradient(circle at center, #0a3d24 0%, #061a0f 100%);
+    background: radial-gradient(circle at center, #8b0000 0%, #2b0000 100%);
   }
   
   .p-screen { 
@@ -35,49 +35,51 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.85);
     padding: 15px 25px;
     border-radius: 10px;
     display: flex;
     gap: 15px;
     z-index: 10;
     align-items: center;
-    border: 1px solid #eb8eb7;
+    border: 1px solid #000;
+    color: #fff;
   }
   .control-btn {
     padding: 10px 20px;
     cursor: pointer;
-    background: #eb8eb7;
-    border: none;
+    background: #000000;
+    color: #ffffff;
+    border: 1px solid #ff4d4d;
     font-weight: bold;
     border-radius: 5px;
   }
 
   .copyright-side { 
     font-size: 16px; 
-    color: #ffffff; 
-    opacity: 0.7; 
-    font-weight: 500;
+    color: #000000; 
+    font-weight: 700;
     text-align: center;
     margin-top: 10px;
     width: 100%;
     word-wrap: break-word;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
   }
   
   .center-zone { position: relative; width: 100%; height: 100%; }
   
   .side-zone { display: flex; flex-direction: column; align-items: center; padding: 20px 0 30px 0; height: 840px; box-sizing: border-box; }
   .text-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; width: var(--side-width); overflow: hidden; }
-  .word-stack { display: flex; flex-direction: column; align-items: center; font-weight: 900; color: #eb8eb7; text-transform: uppercase; line-height: 1; width: 100%; justify-content: center; }
+  .word-stack { display: flex; flex-direction: column; align-items: center; font-weight: 900; color: #000000; text-transform: uppercase; line-height: 1; width: 100%; justify-content: center; }
   
   .letter { 
     display: flex; justify-content: center; align-items: center;
     font-weight: 900; text-transform: uppercase;
-    color: #eb8eb7;
-    text-shadow: 0 0 10px #eb8eb7, 0 0 20px #ff007f;
+    color: #000000;
+    text-shadow: 0 0 8px rgba(255, 0, 0, 0.6), 0 0 15px rgba(0, 0, 0, 0.8);
   }
   
-  .logo-text { font-size: 160px; white-space: nowrap; }
+  .logo-text { font-size: 140px; white-space: nowrap; }
   .logo-side { width: 100px; flex-shrink: 0; margin-top: auto; }
 </style>
 </head>
@@ -93,7 +95,7 @@
 
 <div class="p-screen">
   <div class="top-zone">
-    <div class="letter logo-text">LEMBERG CUP</div>
+    <div class="letter logo-text">ЧОРНІ ВІВЦІ</div>
   </div>
   
   <div class="side-zone">
@@ -134,7 +136,7 @@ class Particle {
     }
     draw() {
         const flicker = Math.sin(Date.now() * this.flickerSpeed + this.flickerOffset) * 0.5 + 0.5;
-        ctx.fillStyle = `rgba(0, 255, 65, ${this.baseOpacity * flicker})`;
+        ctx.fillStyle = `rgba(0, 0, 0, ${this.baseOpacity * flicker})`;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -145,7 +147,7 @@ const particles = Array.from({length: 800}, () => new Particle());
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.globalCompositeOperation = 'screen';
+    ctx.globalCompositeOperation = 'source-over';
     particles.forEach(p => p.draw());
     requestAnimationFrame(animate);
 }
