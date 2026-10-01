@@ -15,26 +15,17 @@
   .p-screen { 
     display: grid; 
     grid-template-columns: var(--side-width) 1176px var(--side-width); 
-    grid-template-rows: 1008px; 
+    grid-template-rows: 860px 148px; 
     width: calc(var(--side-width) * 2 + 1176px); 
     height: 1008px; 
     margin: 0 auto; 
     position: relative; 
     z-index: 1; 
   }
-  
-  .side-zone { 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: flex-end; 
-    padding: 30px 0; 
-    height: 1008px; 
-    box-sizing: border-box; 
-  }
 
   /* Центральная зона с выравниванием по центру */
   .center-zone { 
+    grid-column: 1 / 4;
     position: relative; 
     width: 100%; 
     height: 100%; 
@@ -62,31 +53,45 @@
     line-height: 1.1;
   }
   
-  /* Заголовок (увеличенный размер) */
+  /* Заголовок */
   .logo-text { 
     font-size: 140px; 
     white-space: nowrap; 
     margin-bottom: 10px;
   }
 
-  /* Фамилия и Имя (увеличенный размер) */
+  /* Фамилия и Имя */
   .person-text { 
     font-size: 105px; 
     white-space: nowrap; 
   }
 
+  /* Нижний центральный блок с копирайтом и логотипом */
+  .bottom-branding {
+    grid-column: 1 / 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding-bottom: 20px;
+  }
+
   .copyright-side { 
-    font-size: 16px; 
+    font-size: 20px; 
     color: #ffffff; 
     font-weight: 700;
     text-align: center;
-    margin-top: 10px;
     width: 100%;
     word-wrap: break-word;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
   }
   
-  .logo-side { width: 100px; flex-shrink: 0; }
+  /* Увеличенный логотип */
+  .logo-center { 
+    width: 130px; 
+    flex-shrink: 0; 
+  }
 </style>
 </head>
 <body>
@@ -94,11 +99,6 @@
 <canvas id="particle-canvas"></canvas>
 
 <div class="p-screen">
-  <!-- Левая колонка -->
-  <div class="side-zone">
-    <img src="logo_estevents.png.png" class="logo-side" alt="Logo">
-  </div>
-  
   <!-- Центральная зона: ЧОРНІ ВІВЦІ -> Прізвище -> Ім'я -->
   <div class="center-zone">
     <div class="letter logo-text">ЧОРНІ ВІВЦІ</div>
@@ -106,10 +106,10 @@
     <div class="letter person-text" id="word2">Ім'я</div>
   </div>
   
-  <!-- Правая колонка -->
-  <div class="side-zone">
+  <!-- Нижняя зона по центру: Копирайт и Увеличенный Логотип -->
+  <div class="bottom-branding">
     <div class="copyright-side">© 2026 EstEvents by Емма Щелецька</div>
-    <img src="logo_estevents.png.png" class="logo-side" alt="Logo">
+    <img src="logo_estevents.png.png" class="logo-center" alt="Logo">
   </div>
 </div>
 
