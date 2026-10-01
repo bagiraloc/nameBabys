@@ -11,10 +11,11 @@
     background: radial-gradient(circle at center, #8b0000 0%, #2b0000 100%);
   }
   
+  /* Разметка экрана с центральным блоком во всю высоту */
   .p-screen { 
     display: grid; 
     grid-template-columns: var(--side-width) 1176px var(--side-width); 
-    grid-template-rows: 168px 840px; 
+    grid-template-rows: 1008px; 
     width: calc(var(--side-width) * 2 + 1176px); 
     height: 1008px; 
     margin: 0 auto; 
@@ -22,11 +23,50 @@
     z-index: 1; 
   }
   
-  .top-zone { 
-    grid-column: 1 / 4; 
+  .side-zone { 
     display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: flex-end; 
+    padding: 30px 0; 
+    height: 1008px; 
+    box-sizing: border-box; 
+  }
+
+  /* Центральная зона с выравниванием элементов строго по вертикали по центру */
+  .center-zone { 
+    position: relative; 
+    width: 100%; 
+    height: 100%; 
+    display: flex; 
+    flex-direction: column; 
     align-items: center; 
     justify-content: center; 
+    gap: 30px; 
+  }
+  
+  .letter { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    font-weight: 900; 
+    text-transform: uppercase;
+    color: #000000;
+    text-shadow: 0 0 8px rgba(255, 0, 0, 0.6), 0 0 15px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    line-height: 1;
+  }
+  
+  /* Стиль для заголовка Чорні Вівці */
+  .logo-text { 
+    font-size: 110px; 
+    white-space: nowrap; 
+  }
+
+  /* Стиль для Фамилии и Имени */
+  .person-text { 
+    font-size: 80px; 
+    white-space: nowrap; 
   }
 
   .copyright-side { 
@@ -40,54 +80,7 @@
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
   }
   
-  .center-zone { position: relative; width: 100%; height: 100%; }
-  
-  .side-zone { 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: center; /* Центрирование содержимого колонки */
-    padding: 20px 0 30px 0; 
-    height: 840px; 
-    box-sizing: border-box; 
-  }
-
-  /* Контейнер для горизонтального текста по центру */
-  .text-wrapper { 
-    flex: 1; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    width: var(--side-width); 
-    overflow: hidden; 
-  }
-  
-  /* Горизонтальное размещение букв по центру */
-  .word-stack { 
-    display: flex; 
-    flex-direction: row; 
-    align-items: center; 
-    justify-content: center;
-    font-weight: 900; 
-    color: #000000; 
-    text-transform: uppercase; 
-    line-height: 1; 
-    width: 100%; 
-    text-align: center;
-  }
-  
-  .letter { 
-    display: flex; 
-    justify-content: center; 
-    align-items: center;
-    font-weight: 900; 
-    text-transform: uppercase;
-    color: #000000;
-    text-shadow: 0 0 8px rgba(255, 0, 0, 0.6), 0 0 15px rgba(0, 0, 0, 0.8);
-  }
-  
-  .logo-text { font-size: 130px; white-space: nowrap; text-align: center; }
-  .logo-side { width: 100px; flex-shrink: 0; margin-top: auto; }
+  .logo-side { width: 100px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -95,19 +88,20 @@
 <canvas id="particle-canvas"></canvas>
 
 <div class="p-screen">
-  <div class="top-zone">
-    <div class="letter logo-text">ЧОРНІ ВІВЦІ</div>
-  </div>
-  
+  <!-- Левая колонка (логотип) -->
   <div class="side-zone">
-    <div class="text-wrapper" id="word1"></div>
     <img src="logo_estevents.png.png" class="logo-side" alt="Logo">
   </div>
   
-  <div class="center-zone"></div>
+  <!-- Центральная зона: Заголовок -> Фамилия -> Имя -->
+  <div class="center-zone">
+    <div class="letter logo-text">ЧОРНІ ВІВЦІ</div>
+    <div class="letter person-text" id="word1">Прізвище</div>
+    <div class="letter person-text" id="word2">Ім'я</div>
+  </div>
   
+  <!-- Правая колонка (копирайт и логотип) -->
   <div class="side-zone">
-    <div class="text-wrapper" id="word2"></div>
     <div class="copyright-side">© 2026 EstEvents by Емма Щелецька</div>
     <img src="logo_estevents.png.png" class="logo-side" alt="Logo">
   </div>
@@ -150,42 +144,18 @@ animate();
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyhuV7wnJIyk0oSdbLR1_np0DS47acXlRAnwTEV7MczrJlfn9GZvOMRTNYkjYciKdFu/exec";
 
-function renderWord(containerId, word) {
-    const container = document.getElementById(containerId);
-    if (!word) { container.innerHTML = ""; return; }
-    
-    const letters = word.split('').map(char => `<div class="letter">${char}</div>`).join('');
-    container.innerHTML = `<div class="word-stack" id="stack-${containerId}">${letters}</div>`;
-    
-    const stack = document.getElementById(`stack-${containerId}`);
-    const letterElements = stack.querySelectorAll('.letter');
-    
-    let size = 60;
-    const maxWidth = container.offsetWidth;
-    
-    const applySize = (s) => {
-        letterElements.forEach(l => l.style.fontSize = s + "px");
-    };
-
-    applySize(size);
-    while (stack.offsetWidth > maxWidth && size > 12) {
-        size -= 2;
-        applySize(size);
-    }
-}
-
 async function loadData() { 
     try { 
         const res = await fetch(API_URL + "?t=" + Date.now()); 
         const data = await res.json(); 
         const words = (data[0] || "").trim().split(/\s+/); 
         
-        renderWord("word1", words[0] || "Прізвище"); 
-        renderWord("word2", words[1] || "Ім'я"); 
+        document.getElementById("word1").textContent = words[0] || "Прізвище"; 
+        document.getElementById("word2").textContent = words[1] || "Ім'я"; 
     } catch (e) { 
         console.error("Error:", e); 
-        renderWord("word1", "Прізвище"); 
-        renderWord("word2", "Ім'я"); 
+        document.getElementById("word1").textContent = "Прізвище"; 
+        document.getElementById("word2").textContent = "Ім'я"; 
     } 
 }
 setInterval(loadData, 3000); loadData();
